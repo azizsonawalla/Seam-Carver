@@ -3,25 +3,25 @@ package com.aziz;
 import javafx.util.Pair;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class SeamCarver {
 
-    /* 2D array with ENERGY_MATRIX values for all pixels */
-    private ArrayList<ArrayList<Double>> ENERGY_MATRIX;
+    /* 2D array with shortest paths */
+    private ArrayList<ArrayList<Pair<Integer,Integer>>> BACKTRACKING_MATRIX;
     /* Image file to seam carve */
     private BufferedImage INPUT_IMAGE;
     /* 2D array with RGB values of input image */
-    private ArrayList<ArrayList<Integer>> WORKING_IMAGE;
+    private ArrayList<ArrayList<Pixel>> PIXEL_ARRAY;
+    private int PIXEL_ARRAY_HEIGHT;
+    private int PIXEL_ARRAY_WIDTH;
 
 
-    public SeamCarver(String imagePath) {
-        // load WORKING_IMAGE from file
-        File imageFile = new File(imagePath); //TODO: Add correct WORKING_IMAGE path
+    public SeamCarver(String imagePathIn) {
+        // load image from file
+        File imageFile = new File(imagePathIn); //TODO: Add correct PIXEL_ARRAY path
         try {
             INPUT_IMAGE = ImageIO.read(imageFile);
         } catch (Exception e) {
@@ -29,52 +29,86 @@ public class SeamCarver {
             return;
         }
 
-        // convert rgb values of input image to array
-        WORKING_IMAGE = new ArrayList<ArrayList<Integer>>();
+        // convert input image to array of Pixels
+        PIXEL_ARRAY = new ArrayList<ArrayList<Pixel>>();
         for (int y = 0; y < INPUT_IMAGE.getHeight(); y++) {
-            ArrayList<Integer> row = new ArrayList<>();
+            ArrayList<Pixel> row = new ArrayList<>();
             for (int x = 0; x < INPUT_IMAGE.getWidth(); x++) {
-                row.add(INPUT_IMAGE.getRGB(x, y));
+                row.add(new Pixel(INPUT_IMAGE.getRGB(x, y), x, y));
             }
-            WORKING_IMAGE.add(row);
+            PIXEL_ARRAY.add(row);
         }
     }
 
-    public void carve() {
-        // initialize ENERGY_MATRIX array
-        ENERGY_MATRIX = new ArrayList<ArrayList<Double>>();
-        for (int y = 0; y < WORKING_IMAGE.size(); y++) {
-            ArrayList<Double> row = new ArrayList<>();
-            for (int x = 0; x < WORKING_IMAGE.get(0).size(); x++) {
-                row.add(energyValueOf(x, y));
+    public void carve(int cols, String imagePathOut) {
+        // initialize PIXEL_ARRAY dimensions
+        PIXEL_ARRAY_HEIGHT = PIXEL_ARRAY.size();
+        PIXEL_ARRAY_WIDTH = PIXEL_ARRAY.get(0).size();
+
+        // initialize Pixel energies
+        for (int y = 0; y < PIXEL_ARRAY_HEIGHT; y++) {
+            for (int x = 0; x < PIXEL_ARRAY_WIDTH; x++) {
+                Pixel currentPixel = PIXEL_ARRAY.get(y).get(x);
+                currentPixel.setEnergy(energyValueOf(x, y));
             }
-            ENERGY_MATRIX.add(row);
         }
-        System.out.print(Arrays.deepToString(ENERGY_MATRIX.toArray()));
+
+        // initialize Pixel cumulative energies and backtracking matrix
+        BACKTRACKING_MATRIX = new ArrayList<>();
+        for (int y = 0; y < PIXEL_ARRAY_HEIGHT; y++) {
+            ArrayList<Pair<Integer,Integer>> backtracking_row = new ArrayList<Pair<Integer, Integer>>();
+            for (int x = 0; x < PIXEL_ARRAY_WIDTH; x++) {
+                Pixel currentPixel = PIXEL_ARRAY.get(y).get(x);
+                if (y == 0) {
+                    currentPixel.setCumulativeEnergy(currentPixel.getEnergy());
+                    backtracking_row.add(currentPixel.getPos());
+                } else {
+                    Pixel prevPixel = minimumPixel(currentPixel);
+                    currentPixel.setCumulativeEnergy(currentPixel.getEnergy() + prevPixel.getCumulativeEnergy());
+                    backtracking_row.add(prevPixel.getPos());
+                }
+            }
+            BACKTRACKING_MATRIX.add(backtracking_row);
+        }
 
         // remove least energy rows
         ArrayList<Pair<Integer,Integer>> path = leastEnergyVerticalPath();
-        WORKING_IMAGE = removeElements(path, WORKING_IMAGE);
+        PIXEL_ARRAY = removeElements(path, PIXEL_ARRAY);
 
         // create carved image
-        int carvedImageHeight = WORKING_IMAGE.size();
-        int carvedImageWidth = WORKING_IMAGE.get(0).size();
+        int carvedImageHeight = PIXEL_ARRAY_HEIGHT;
+        int carvedImageWidth = PIXEL_ARRAY_WIDTH-1;
         BufferedImage carvedImage = new BufferedImage(carvedImageWidth, carvedImageHeight, BufferedImage.TYPE_INT_ARGB);
         for (int y = 0; y < carvedImageHeight; y++) {
             for (int x = 0; x < carvedImageWidth; x++) {
-                carvedImage.setRGB(x, y, WORKING_IMAGE.get(y).get(x));
+                carvedImage.setRGB(x, y, PIXEL_ARRAY.get(y).get(x).getRGB());
             }
         }
 
         // write carvedImage back to file
         try {
-            ImageIO.write(carvedImage, "png", new File("sample-images/sample1-carved.png"));
+            ImageIO.write(carvedImage, "png", new File(imagePathOut));
         } catch (Exception e) {
             System.err.print(e.getMessage());
         }
     }
 
-    private ArrayList<ArrayList<Integer>> removeElements(ArrayList<Pair<Integer,Integer>> path, ArrayList<ArrayList<Integer>> array) {
+    private Pixel minimumPixel(Pixel currentPixel) {
+        Pixel Left = PIXEL_ARRAY.get(currentPixel.getY()-1).get(mod(currentPixel.getX()-1, PIXEL_ARRAY_WIDTH));
+        Pixel Center = PIXEL_ARRAY.get(currentPixel.getY()-1).get(currentPixel.getX());
+        Pixel Right = PIXEL_ARRAY.get(currentPixel.getY()-1).get(mod(currentPixel.getX()+1, PIXEL_ARRAY_WIDTH));
+
+        double minimumCE = Math.min(Math.min(Left.getCumulativeEnergy(), Center.getCumulativeEnergy()), Right.getCumulativeEnergy());
+        if (minimumCE == Left.getCumulativeEnergy()) {
+            return Left;
+        }
+        if (minimumCE == Center.getCumulativeEnergy()) {
+            return Center;
+        }
+        return Right;
+    }
+
+    private ArrayList<ArrayList<Pixel>> removeElements(ArrayList<Pair<Integer,Integer>> path, ArrayList<ArrayList<Pixel>> array) {
         for (int i = 0; i < path.size(); i++) {
             Pair<Integer,Integer> pair = path.get(i);
             int x = pair.getKey();
@@ -88,28 +122,20 @@ public class SeamCarver {
         /* Using dual gradient energy function */
 
         // calculate neighbours
-        ArrayList<Pair<Integer,Integer>> xNeighbours = getXNeighbours(x, y);
-        ArrayList<Pair<Integer,Integer>> yNeighbours = getYNeighbours(x, y);
-        Pair<Integer,Integer> xPrev = xNeighbours.get(0);
-        Pair<Integer,Integer> xNext = xNeighbours.get(1);
-        Pair<Integer,Integer> yPrev = yNeighbours.get(0);
-        Pair<Integer,Integer> yNext = yNeighbours.get(1);
-
-        // get RGB values of neighbours
-        Color xPrevRGB = new Color(WORKING_IMAGE.get(xPrev.getValue()).get(xPrev.getKey()));
-        Color xNextRGB = new Color(WORKING_IMAGE.get(xNext.getValue()).get(xNext.getKey()));
-        Color yPrevRGB = new Color(WORKING_IMAGE.get(yPrev.getValue()).get(yPrev.getKey()));
-        Color yNextRGB = new Color(WORKING_IMAGE.get(yNext.getValue()).get(yNext.getKey()));
+        Pixel xPrev = PIXEL_ARRAY.get(y).get(mod(x-1, PIXEL_ARRAY_WIDTH));
+        Pixel xNext = PIXEL_ARRAY.get(y).get(mod(x+1, PIXEL_ARRAY_WIDTH));
+        Pixel yPrev = PIXEL_ARRAY.get(mod(y-1, PIXEL_ARRAY_HEIGHT)).get(x);
+        Pixel yNext = PIXEL_ARRAY.get(mod(y+1, PIXEL_ARRAY_HEIGHT)).get(x);
 
         // calculate RGB gradients in x direction
-        double deltaX_Red = Math.abs(xPrevRGB.getRed() - xNextRGB.getRed());
-        double deltaX_Green = Math.abs(xPrevRGB.getGreen() - xNextRGB.getGreen());
-        double deltaX_Blue = Math.abs(xPrevRGB.getBlue() - xNextRGB.getBlue());
+        double deltaX_Red = Math.abs(xPrev.getRed() - xNext.getRed());
+        double deltaX_Green = Math.abs(xPrev.getGreen() - xNext.getGreen());
+        double deltaX_Blue = Math.abs(xPrev.getBlue() - xNext.getBlue());
 
         // calculate RGB gradients in y direction
-        double deltaY_Red = Math.abs(yPrevRGB.getRed() - yNextRGB.getRed());
-        double deltaY_Green = Math.abs(yPrevRGB.getGreen() - yNextRGB.getGreen());
-        double deltaY_Blue = Math.abs(yPrevRGB.getGreen() - yNextRGB.getGreen());
+        double deltaY_Red = Math.abs(yPrev.getRed() - yNext.getRed());
+        double deltaY_Green = Math.abs(yPrev.getGreen() - yNext.getGreen());
+        double deltaY_Blue = Math.abs(yPrev.getGreen() - yNext.getGreen());
 
         // calculate x and y gradients
         double deltaX = Math.pow(deltaX_Red, 2) + Math.pow(deltaX_Green, 2) + Math.pow(deltaX_Blue, 2);
@@ -118,59 +144,47 @@ public class SeamCarver {
         return deltaX + deltaY;
     }
 
-    private ArrayList<Pair<Integer,Integer>> getXNeighbours(int x, int y) {
-        int xPrevX = x - 1;
-        int xNextX = x + 1;
-
-        if (xPrevX < 0) {
-            xPrevX = WORKING_IMAGE.get(0).size() -1;
+    private int mod(int num, int modulo) {
+        if (num >=0 && num < modulo) {
+            return num;
         }
-
-        if (xNextX > WORKING_IMAGE.get(0).size() -1) {
-            xPrevX = 0;
+        if (num >=0 ) {
+            return num % modulo;
         }
-
-        Pair<Integer,Integer> xPrev = new Pair<>(xPrevX, y);
-        Pair<Integer,Integer> xNext = new Pair<>(xNextX, y);
-
-        ArrayList<Pair<Integer,Integer>> xNeighbours = new ArrayList<>();
-        xNeighbours.add(xPrev);
-        xNeighbours.add(xNext);
-        return xNeighbours;
-    }
-
-    private ArrayList<Pair<Integer,Integer>> getYNeighbours(int x, int y) {
-        int yPrevY = y - 1;
-        int yNextY = y + 1;
-
-        if (yPrevY < 0) {
-            yPrevY = WORKING_IMAGE.size() -1;
-        }
-
-        if (yNextY > WORKING_IMAGE.size() -1) {
-            yNextY = 0;
-        }
-
-        Pair<Integer,Integer> yPrev = new Pair<>(x, yPrevY);
-        Pair<Integer,Integer> yNext = new Pair<>(x, yNextY);
-
-        ArrayList<Pair<Integer,Integer>> yNeighbours = new ArrayList<>();
-        yNeighbours.add(yPrev);
-        yNeighbours.add(yNext);
-        return yNeighbours;
+        return modulo + num;
     }
 
     private ArrayList<Pair<Integer, Integer>> leastEnergyVerticalPath() {
-        //TODO: Returns least ENERGY_MATRIX path from  given WORKING_IMAGE
-        ArrayList<Pair<Integer,Integer>> path = new ArrayList<Pair<Integer,Integer>>();
-        for (int i = 0; i < 450; i++) {
-            path.add(new Pair<>(0,i));
+        ArrayList<Pixel> lastRow = PIXEL_ARRAY.get(PIXEL_ARRAY_HEIGHT-1);
+        Pixel minimumCEPixel = lastRow.get(0);
+
+        for (int i = 1; i < lastRow.size(); i++) {
+            Pixel currPixel = lastRow.get(i);
+            if (currPixel.getCumulativeEnergy() < minimumCEPixel.getCumulativeEnergy()) {
+                minimumCEPixel = currPixel;
+            }
         }
+
+        Pair<Integer,Integer> currentPos = minimumCEPixel.getPos(); // start point of path
+        Pair<Integer,Integer> nextPos = BACKTRACKING_MATRIX.get(currentPos.getValue()).get(currentPos.getKey());
+        ArrayList<Pair<Integer,Integer>> path = new ArrayList<Pair<Integer, Integer>>();
+
+        while (currentPos != nextPos) {
+            path.add(currentPos);
+            currentPos = nextPos;
+            nextPos = BACKTRACKING_MATRIX.get(currentPos.getValue()).get(currentPos.getKey());
+        }
+
         return path;
     }
 
     public static void main(String[] args) {
-        SeamCarver carver = new SeamCarver("sample-images/sample1.png");
-        carver.carve();
+        for (int i = 0; i < 401; i ++) {
+            if (i % 10 == 0) {
+                System.out.print("Removing column ".concat(Integer.toString(i)).concat("\n"));
+            }
+            SeamCarver carver = new SeamCarver("sample-images/sample1-".concat(Integer.toString(i)).concat(".jpg"));
+            carver.carve(50, "sample-images/sample1-".concat(Integer.toString(i+1)).concat(".jpg"));
+        }
     }
 }

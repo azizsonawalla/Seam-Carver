@@ -21,7 +21,7 @@ public class SeamCarver {
 
     public SeamCarver(String imagePathIn) {
         // load image from file
-        File imageFile = new File(imagePathIn); //TODO: Add correct PIXEL_ARRAY path
+        File imageFile = new File(imagePathIn);
         try {
             INPUT_IMAGE = ImageIO.read(imageFile);
         } catch (Exception e) {
@@ -144,7 +144,7 @@ public class SeamCarver {
         return deltaX + deltaY;
     }
 
-    private int mod(int num, int modulo) {
+    public int mod(int num, int modulo) {
         if (num >=0 && num < modulo) {
             return num;
         }
@@ -179,12 +179,12 @@ public class SeamCarver {
     }
 
     public static void main(String[] args) {
-        for (int i = 0; i < 401; i ++) {
+        for (int i = 0; i < 100; i ++) {
             if (i % 10 == 0) {
                 System.out.print("Removing column ".concat(Integer.toString(i)).concat("\n"));
             }
-            SeamCarver carver = new SeamCarver("sample-images/sample1-".concat(Integer.toString(i)).concat(".jpg"));
-            carver.carve(50, "sample-images/sample1-".concat(Integer.toString(i+1)).concat(".jpg"));
+            SeamCarver carver = new SeamCarver("sample-images/sample2-".concat(Integer.toString(i)).concat(".png"));
+            carver.carve(50, "sample-images/sample2-".concat(Integer.toString(i+1)).concat(".png"));
         }
     }
 }

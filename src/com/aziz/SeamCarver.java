@@ -71,6 +71,26 @@ public class SeamCarver {
             BACKTRACKING_MATRIX.add(backtracking_row);
         }
 
+//        String colors = "";
+//        String energies = "";
+//        String cumulative = "";
+//        for (int y = 0; y < PIXEL_ARRAY_HEIGHT; y++) {
+//            for (int x = 0; x < PIXEL_ARRAY_WIDTH; x++) {
+//                Pixel currentPixel = PIXEL_ARRAY.get(y).get(x);
+//                energies = energies.concat(Double.toString(currentPixel.getEnergy()).concat("  "));
+//                cumulative = cumulative.concat(Double.toString(currentPixel.getCumulativeEnergy()).concat("  "));
+//                colors = colors.concat(Integer.toString(currentPixel.getRed())).concat(",").concat(Integer.toString(currentPixel.getGreen())).concat(",").concat(Integer.toString(currentPixel.getBlue())).concat("  ");
+//            }
+//            energies = energies.concat("\n");
+//            colors = colors.concat("\n");
+//            cumulative = cumulative.concat("\n");
+//        }
+//
+//        System.out.print(colors);
+//        System.out.print(energies);
+//        System.out.print(cumulative);
+//        return;
+
         // remove least energy rows
         ArrayList<Pair<Integer,Integer>> path = leastEnergyVerticalPath();
         PIXEL_ARRAY = removeElements(path, PIXEL_ARRAY);
@@ -129,13 +149,19 @@ public class SeamCarver {
 
         // calculate RGB gradients in x direction
         double deltaX_Red = Math.abs(xPrev.getRed() - xNext.getRed());
+        //System.out.print("\nDeltaX Red: ".concat(Double.toString(deltaX_Red)));
         double deltaX_Green = Math.abs(xPrev.getGreen() - xNext.getGreen());
+        //System.out.print("\nDeltaX Green: ".concat(Double.toString(deltaX_Green)));
         double deltaX_Blue = Math.abs(xPrev.getBlue() - xNext.getBlue());
+        //System.out.print("\nDeltaX Blue: ".concat(Double.toString(deltaX_Blue)));
 
         // calculate RGB gradients in y direction
         double deltaY_Red = Math.abs(yPrev.getRed() - yNext.getRed());
+        //System.out.print("\nDeltaY Red: ".concat(Double.toString(deltaY_Red)));
         double deltaY_Green = Math.abs(yPrev.getGreen() - yNext.getGreen());
-        double deltaY_Blue = Math.abs(yPrev.getGreen() - yNext.getGreen());
+        //System.out.print("\nDeltaY Green: ".concat(Double.toString(deltaY_Green)));
+        double deltaY_Blue = Math.abs(yPrev.getBlue() - yNext.getBlue());
+        //System.out.print("\nDeltaY Blue: ".concat(Double.toString(deltaY_Blue)));
 
         // calculate x and y gradients
         double deltaX = Math.pow(deltaX_Red, 2) + Math.pow(deltaX_Green, 2) + Math.pow(deltaX_Blue, 2);
@@ -179,12 +205,15 @@ public class SeamCarver {
     }
 
     public static void main(String[] args) {
-        for (int i = 0; i < 100; i ++) {
+//        SeamCarver carver = new SeamCarver("sample-images/test1.png");
+//        carver.carve(50, "sample-images/test2.png");
+
+        for (int i = 0; i < 300; i ++) {
             if (i % 10 == 0) {
                 System.out.print("Removing column ".concat(Integer.toString(i)).concat("\n"));
             }
-            SeamCarver carver = new SeamCarver("sample-images/sample2-".concat(Integer.toString(i)).concat(".png"));
-            carver.carve(50, "sample-images/sample2-".concat(Integer.toString(i+1)).concat(".png"));
+            SeamCarver carver = new SeamCarver("sample-images/sample1-".concat(Integer.toString(i)).concat(".jpg"));
+            carver.carve(50, "sample-images/sample1-".concat(Integer.toString(i+1)).concat(".jpg"));
         }
     }
 }

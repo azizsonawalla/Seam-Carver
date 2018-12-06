@@ -34,17 +34,32 @@ public class SeamCarver {
         for (int y = 0; y < INPUT_IMAGE.getHeight(); y++) {
             ArrayList<Pixel> row = new ArrayList<>();
             for (int x = 0; x < INPUT_IMAGE.getWidth(); x++) {
-                row.add(new Pixel(INPUT_IMAGE.getRGB(x, y), x, y));
+                row.add(new Pixel(INPUT_IMAGE.getRGB(x, y)));
             }
             PIXEL_ARRAY.add(row);
         }
+
+        // initialize PIXEL_ARRAY dimensions
+        PIXEL_ARRAY_HEIGHT = PIXEL_ARRAY.size();
+        PIXEL_ARRAY_WIDTH = PIXEL_ARRAY.get(0).size();
     }
 
     public void carve(int cols, String imagePathOut) {
+        if (PIXEL_ARRAY_WIDTH - cols < 1){
+            System.out.println("Too many columns to be removed");
+            return;
+        }
         for (int col = 0; col < cols; col++) {
-            // initialize PIXEL_ARRAY dimensions
-            PIXEL_ARRAY_HEIGHT = PIXEL_ARRAY.size();
-            PIXEL_ARRAY_WIDTH = PIXEL_ARRAY.get(0).size();
+
+            if (col%10==0) {System.out.println("Removing column " + col);}
+
+            // initialize Pixel positions
+            for (int y = 0; y < PIXEL_ARRAY_HEIGHT; y++) {
+                for (int x = 0; x < PIXEL_ARRAY_WIDTH; x++) {
+                    Pixel currentPixel = PIXEL_ARRAY.get(y).get(x);
+                    currentPixel.setPos(new Pair<>(x,y));
+                }
+            }
 
             // initialize Pixel energies
             for (int y = 0; y < PIXEL_ARRAY_HEIGHT; y++) {
@@ -64,9 +79,10 @@ public class SeamCarver {
                         currentPixel.setCumulativeEnergy(currentPixel.getEnergy());
                         backtracking_row.add(currentPixel.getPos());
                     } else {
-                        Pixel prevPixel = minimumPixel(currentPixel);
-                        currentPixel.setCumulativeEnergy(currentPixel.getEnergy() + prevPixel.getCumulativeEnergy());
-                        backtracking_row.add(prevPixel.getPos());
+                        Pair<Pixel, Double> forwardEnergyPixel = minimumPixelAbove(currentPixel);
+                        Pixel pixelAbove = forwardEnergyPixel.getKey();
+                        currentPixel.setCumulativeEnergy(forwardEnergyPixel.getValue());
+                        backtracking_row.add(pixelAbove.getPos());
                     }
                 }
                 BACKTRACKING_MATRIX.add(backtracking_row);
@@ -99,7 +115,7 @@ public class SeamCarver {
 
         // create carved image
         int carvedImageHeight = PIXEL_ARRAY_HEIGHT;
-        int carvedImageWidth = PIXEL_ARRAY_WIDTH - cols;
+        int carvedImageWidth = PIXEL_ARRAY_WIDTH;
         BufferedImage carvedImage = new BufferedImage(carvedImageWidth, carvedImageHeight, BufferedImage.TYPE_INT_ARGB);
         for (int y = 0; y < carvedImageHeight; y++) {
             for (int x = 0; x < carvedImageWidth; x++) {
@@ -115,19 +131,25 @@ public class SeamCarver {
         }
     }
 
-    private Pixel minimumPixel(Pixel currentPixel) {
-        Pixel Left = PIXEL_ARRAY.get(currentPixel.getY() - 1).get(mod(currentPixel.getX() - 1, PIXEL_ARRAY_WIDTH));
-        Pixel Center = PIXEL_ARRAY.get(currentPixel.getY() - 1).get(currentPixel.getX());
-        Pixel Right = PIXEL_ARRAY.get(currentPixel.getY() - 1).get(mod(currentPixel.getX() + 1, PIXEL_ARRAY_WIDTH));
+    private Pair<Pixel, Double> minimumPixelAbove(Pixel currentPixel) {
+        Pixel upLeft = PIXEL_ARRAY.get(currentPixel.getY() - 1).get(mod(currentPixel.getX() - 1, PIXEL_ARRAY_WIDTH));
+        Pixel upCenter = PIXEL_ARRAY.get(currentPixel.getY() - 1).get(currentPixel.getX());
+        Pixel upRight = PIXEL_ARRAY.get(currentPixel.getY() - 1).get(mod(currentPixel.getX() + 1, PIXEL_ARRAY_WIDTH));
+        Pixel Left = PIXEL_ARRAY.get(currentPixel.getY()).get(mod(currentPixel.getX() - 1, PIXEL_ARRAY_WIDTH));
+        Pixel Right = PIXEL_ARRAY.get(currentPixel.getY()).get(mod(currentPixel.getX() + 1, PIXEL_ARRAY_WIDTH));
 
-        double minimumCE = Math.min(Math.min(Left.getCumulativeEnergy(), Center.getCumulativeEnergy()), Right.getCumulativeEnergy());
-        if (minimumCE == Left.getCumulativeEnergy()) {
-            return Left;
+        double FE_left = upLeft.getCumulativeEnergy() + currentPixel.getEnergy() + Math.abs(upCenter.getEnergy() - Left.getEnergy());
+        double FE_center = upCenter.getCumulativeEnergy() + currentPixel.getEnergy();
+        double FE_right = upRight.getCumulativeEnergy() + currentPixel.getEnergy() + Math.abs(upCenter.getEnergy() - Right.getEnergy());
+
+        double minimumCFE = Math.min(Math.min(FE_left, FE_center), FE_right);
+        if (minimumCFE == FE_left) {
+            return new Pair<>(upLeft, FE_left);
         }
-        if (minimumCE == Center.getCumulativeEnergy()) {
-            return Center;
+        if (minimumCFE == FE_center) {
+            return new Pair<>(upCenter, FE_center);
         }
-        return Right;
+        return new Pair<>(upRight, FE_right);
     }
 
     private ArrayList<ArrayList<Pixel>> removeElements(ArrayList<Pair<Integer, Integer>> path, ArrayList<ArrayList<Pixel>> array) {
@@ -137,6 +159,7 @@ public class SeamCarver {
             int y = pair.getValue();
             array.get(y).remove(x);
         }
+        PIXEL_ARRAY_WIDTH--;
         return array;
     }
 
@@ -207,7 +230,7 @@ public class SeamCarver {
     }
 
     public static void main(String[] args) {
-        SeamCarver carver = new SeamCarver("sample-images/sample1-0.png");
-        carver.carve(50, "sample-images/sample1-1.png");
+        SeamCarver carver = new SeamCarver("sample-images/sample6-input.jpg");
+        carver.carve(400, "sample-images/sample6-output.jpg");
     }
 }

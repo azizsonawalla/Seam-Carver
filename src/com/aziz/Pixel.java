@@ -24,6 +24,10 @@ public class Pixel {
         this.Y = y;
     }
 
+    public Pixel(int rgb) {
+        this.RGB = rgb;
+    }
+
     public int getRGB(){
         return this.RGB;
     }

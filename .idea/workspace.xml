@@ -9,13 +9,21 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/seam_carver$PixelTest.ic" NAME="PixelTest Coverage Results" MODIFIED="1544250103577" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>com.aziz.*</FILTER>
+    </SUITE>
+  </component>
+  <component name="CoverageViewManager">
+    <option name="myElementSize" value="217" />
+  </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/aziz/SeamCarver.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="122">
-              <caret line="212" column="45" selection-start-line="212" selection-start-column="45" selection-end-line="212" selection-end-column="45" />
+            <state relative-caret-position="171">
+              <caret line="234" column="5" selection-start-line="234" selection-start-column="5" selection-end-line="234" selection-end-column="5" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -23,23 +31,30 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/com/aziz/ContentAwareImageResizer.java">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/com/aziz/SeamCarverTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="34">
-              <caret line="2" column="37" selection-start-line="2" selection-start-column="37" selection-end-line="2" selection-end-column="37" />
+            <state relative-caret-position="275">
+              <caret line="26" column="5" selection-start-line="26" selection-start-column="5" selection-end-line="26" selection-end-column="5" />
+              <folding>
+                <element signature="e#226#227#0" expanded="true" />
+                <element signature="e#264#265#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/aziz/Pixel.java">
+        <entry file="file://$PROJECT_DIR$/test/com/aziz/PixelTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="442">
-              <caret line="27" column="23" selection-start-line="27" selection-start-column="23" selection-end-line="27" selection-end-column="23" />
+            <state relative-caret-position="391">
+              <caret line="23" column="5" selection-start-line="17" selection-start-column="4" selection-end-line="23" selection-end-column="5" />
               <folding>
-                <element signature="e#567#568#0" expanded="true" />
-                <element signature="e#597#598#0" expanded="true" />
+                <element signature="imports" expanded="true" />
+                <element signature="e#2250#2251#0" expanded="true" />
+                <element signature="e#2310#2311#0" expanded="true" />
+                <element signature="e#2354#2355#0" expanded="true" />
+                <element signature="e#2425#2426#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -50,8 +65,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="JUnit5 Test Class" />
         <option value="Class" />
+        <option value="JUnit5 Test Class" />
       </list>
     </option>
   </component>
@@ -60,6 +75,7 @@
       <find>PIXEL_ARRAY.size()</find>
       <find>PIXEL_ARRAY.get(0).size()</find>
       <find>com.aziz.Pixel</find>
+      <find>mod</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -73,7 +89,11 @@
         <option value="$PROJECT_DIR$/src/com/aziz/SeamCarverTest.java" />
         <option value="$PROJECT_DIR$/test/com/aziz/test/PixelTest.java" />
         <option value="$PROJECT_DIR$/test/com/aziz/test/SeamCarverTest.java" />
+        <option value="$PROJECT_DIR$/test/Pixeltest.java" />
         <option value="$PROJECT_DIR$/src/com/aziz/Pixel.java" />
+        <option value="$PROJECT_DIR$/test/com/aziz/PixelTest.java" />
+        <option value="$PROJECT_DIR$/src/com/aziz/ContentAwareImageResizer.java" />
+        <option value="$PROJECT_DIR$/test/com/aziz/SeamCarverTest.java" />
         <option value="$PROJECT_DIR$/src/com/aziz/SeamCarver.java" />
       </list>
     </option>
@@ -89,8 +109,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -109,15 +127,33 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="aziz" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="seam-carver" type="b2602c69:ProjectViewProjectNode" />
+              <item name="seam-carver" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="seam-carver" type="b2602c69:ProjectViewProjectNode" />
+              <item name="seam-carver" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="aziz" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="AndroidView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="Downloaded.Files.Path.Enabled" value="false" />
+    <property name="Repository.Attach.Annotations" value="false" />
+    <property name="Repository.Attach.JavaDocs" value="false" />
+    <property name="Repository.Attach.Sources" value="false" />
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary" value="JUnit5" />
+    <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5" value="" />
     <property name="create.test.in.the.same.root" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../cloned_gitprojects/Seam-Carver" />
     <property name="project.structure.last.edited" value="Modules" />
@@ -152,7 +188,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.Main">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true">
       <option name="MAIN_CLASS_NAME" value="com.aziz.SeamCarver" />
       <module name="Seam-Carver" />
@@ -163,9 +199,39 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="PixelTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Seam-Carver" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.aziz.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.aziz" />
+      <option name="MAIN_CLASS_NAME" value="com.aziz.PixelTest" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SeamCarverTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Seam-Carver" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.aziz.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.aziz" />
+      <option name="MAIN_CLASS_NAME" value="com.aziz.SeamCarverTest" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Application.Main" />
+        <item itemvalue="JUnit.SeamCarverTest" />
+        <item itemvalue="JUnit.PixelTest" />
       </list>
     </recent_temporary>
   </component>
@@ -179,11 +245,37 @@
     </task>
     <servers />
   </component>
+  <component name="TestHistory">
+    <history-entry file="PixelTest - 2018.12.07 at 22h 07m 55s.xml">
+      <configuration name="PixelTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="PixelTest - 2018.12.07 at 22h 09m 56s.xml">
+      <configuration name="PixelTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="PixelTest - 2018.12.07 at 22h 12m 21s.xml">
+      <configuration name="PixelTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="PixelTest - 2018.12.07 at 22h 15m 39s.xml">
+      <configuration name="PixelTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="PixelTest - 2018.12.07 at 22h 21m 52s.xml">
+      <configuration name="PixelTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="SeamCarverTest - 2018.12.07 at 22h 28m 45s.xml">
+      <configuration name="SeamCarverTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="SeamCarverTest - 2018.12.07 at 22h 31m 49s.xml">
+      <configuration name="SeamCarverTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="SeamCarverTest - 2018.12.07 at 22h 33m 04s.xml">
+      <configuration name="SeamCarverTest" configurationId="JUnit" />
+    </history-entry>
+  </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="33" width="1550" height="838" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17713153" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17986578" />
       <window_info id="Structure" order="1" weight="0.24960339" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -191,7 +283,7 @@
       <window_info id="Favorites" order="5" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3290398" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.51098096" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.51098096" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.5578331" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -200,6 +292,7 @@
       <window_info anchor="bottom" id="Event Log" order="8" side_tool="true" weight="0.3290398" />
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.3290398" />
       <window_info anchor="bottom" id="Messages" order="10" weight="0.32796487" />
+      <window_info anchor="right" id="Coverage" side_tool="true" weight="0.33892617" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -226,8 +319,8 @@
         <state relative-caret-position="672">
           <caret line="586" column="5" lean-forward="true" selection-start-line="584" selection-start-column="4" selection-end-line="586" selection-end-column="5" />
           <folding>
-            <element signature="e#17219#17220#0" expanded="false" />
-            <element signature="e#17265#17266#0" expanded="false" />
+            <element signature="e#17219#17220#0" />
+            <element signature="e#17265#17266#0" />
           </folding>
         </state>
       </provider>
@@ -235,31 +328,63 @@
     <entry file="file://$PROJECT_DIR$/src/com/aziz/SeamCarverTest.java" />
     <entry file="file://$PROJECT_DIR$/test/com/aziz/test/PixelTest.java" />
     <entry file="file://$PROJECT_DIR$/test/com/aziz/test/SeamCarverTest.java" />
-    <entry file="file://$PROJECT_DIR$/src/com/aziz/SeamCarver.java">
+    <entry file="file://$PROJECT_DIR$/test/Pixeltest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="122">
-          <caret line="212" column="45" selection-start-line="212" selection-start-column="45" selection-end-line="212" selection-end-column="45" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="51">
+          <caret line="3" column="13" selection-start-line="3" selection-start-column="13" selection-end-line="3" selection-end-column="13" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/aziz/Pixel.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="27" column="23" selection-start-line="27" selection-start-column="23" selection-end-line="27" selection-end-column="23" />
+        <state relative-caret-position="102">
+          <caret line="15" column="19" lean-forward="true" selection-start-line="15" selection-start-column="19" selection-end-line="15" selection-end-column="19" />
           <folding>
-            <element signature="e#567#568#0" expanded="true" />
-            <element signature="e#597#598#0" expanded="true" />
+            <element signature="e#649#650#0" expanded="true" />
+            <element signature="e#679#680#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/aziz/ContentAwareImageResizer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="37" selection-start-line="2" selection-start-column="37" selection-end-line="2" selection-end-column="37" />
+        <state relative-caret-position="85">
+          <caret line="5" column="8" selection-start-line="5" selection-start-column="8" selection-end-line="5" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/com/aziz/PixelTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="23" column="5" selection-start-line="17" selection-start-column="4" selection-end-line="23" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2250#2251#0" expanded="true" />
+            <element signature="e#2310#2311#0" expanded="true" />
+            <element signature="e#2354#2355#0" expanded="true" />
+            <element signature="e#2425#2426#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/com/aziz/SeamCarverTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="275">
+          <caret line="26" column="5" selection-start-line="26" selection-start-column="5" selection-end-line="26" selection-end-column="5" />
+          <folding>
+            <element signature="e#226#227#0" expanded="true" />
+            <element signature="e#264#265#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/aziz/SeamCarver.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="234" column="5" selection-start-line="234" selection-start-column="5" selection-end-line="234" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

@@ -131,7 +131,7 @@ public class SeamCarver {
         }
     }
 
-    private Pair<Pixel, Double> minimumPixelAbove(Pixel currentPixel) {
+    public Pair<Pixel, Double> minimumPixelAbove(Pixel currentPixel) {
         Pixel upLeft = PIXEL_ARRAY.get(currentPixel.getY() - 1).get(mod(currentPixel.getX() - 1, PIXEL_ARRAY_WIDTH));
         Pixel upCenter = PIXEL_ARRAY.get(currentPixel.getY() - 1).get(currentPixel.getX());
         Pixel upRight = PIXEL_ARRAY.get(currentPixel.getY() - 1).get(mod(currentPixel.getX() + 1, PIXEL_ARRAY_WIDTH));
@@ -152,7 +152,7 @@ public class SeamCarver {
         return new Pair<>(upRight, FE_right);
     }
 
-    private ArrayList<ArrayList<Pixel>> removeElements(ArrayList<Pair<Integer, Integer>> path, ArrayList<ArrayList<Pixel>> array) {
+    public ArrayList<ArrayList<Pixel>> removeElements(ArrayList<Pair<Integer, Integer>> path, ArrayList<ArrayList<Pixel>> array) {
         for (int i = 0; i < path.size(); i++) {
             Pair<Integer, Integer> pair = path.get(i);
             int x = pair.getKey();
@@ -163,7 +163,7 @@ public class SeamCarver {
         return array;
     }
 
-    private double energyValueOf(int x, int y) {
+    public double energyValueOf(int x, int y) {
         /* Using dual gradient energy function */
 
         // calculate neighbours
@@ -202,10 +202,10 @@ public class SeamCarver {
         if (num >= 0) {
             return num % modulo;
         }
-        return modulo + num;
+        return modulo + num -1;
     }
 
-    private ArrayList<Pair<Integer, Integer>> leastEnergyVerticalPath() {
+    public ArrayList<Pair<Integer, Integer>> leastEnergyVerticalPath() {
         ArrayList<Pixel> lastRow = PIXEL_ARRAY.get(PIXEL_ARRAY_HEIGHT - 1);
         Pixel minimumCEPixel = lastRow.get(0);
 
@@ -231,6 +231,6 @@ public class SeamCarver {
 
     public static void main(String[] args) {
         SeamCarver carver = new SeamCarver("sample-images/sample6-input.jpg");
-        carver.carve(400, "sample-images/sample6-output.jpg");
+        carver.carve(500, "sample-images/sample6-output.jpg");
     }
 }

@@ -110,7 +110,7 @@ public class SeamCarver {
 
             // remove least energy rows
             ArrayList<Pair<Integer, Integer>> path = leastEnergyVerticalPath();
-            PIXEL_ARRAY = removeElements(path, PIXEL_ARRAY);
+            removeElements(path);
         }
 
         // create carved image
@@ -132,15 +132,31 @@ public class SeamCarver {
     }
 
     public Pair<Pixel, Double> minimumPixelAbove(Pixel currentPixel) {
-        Pixel upLeft = PIXEL_ARRAY.get(currentPixel.getY() - 1).get(mod(currentPixel.getX() - 1, PIXEL_ARRAY_WIDTH));
-        Pixel upCenter = PIXEL_ARRAY.get(currentPixel.getY() - 1).get(currentPixel.getX());
-        Pixel upRight = PIXEL_ARRAY.get(currentPixel.getY() - 1).get(mod(currentPixel.getX() + 1, PIXEL_ARRAY_WIDTH));
-        Pixel Left = PIXEL_ARRAY.get(currentPixel.getY()).get(mod(currentPixel.getX() - 1, PIXEL_ARRAY_WIDTH));
-        Pixel Right = PIXEL_ARRAY.get(currentPixel.getY()).get(mod(currentPixel.getX() + 1, PIXEL_ARRAY_WIDTH));
+        Pixel upLeft, upRight, upCenter, left, right;
+        double left_new_energy, right_new_energy;
+        upCenter = PIXEL_ARRAY.get(currentPixel.getY() - 1).get(currentPixel.getX());
+        if (currentPixel.getX() == 0){
+            upLeft = upCenter;
+            left = null;
+            left_new_energy = 0;
+        } else {
+            upLeft = PIXEL_ARRAY.get(currentPixel.getY() - 1).get(mod(currentPixel.getX() - 1, PIXEL_ARRAY_WIDTH));
+            left = PIXEL_ARRAY.get(currentPixel.getY()).get(mod(currentPixel.getX() - 1, PIXEL_ARRAY_WIDTH));
+            left_new_energy = Math.abs(upCenter.getEnergy() - left.getEnergy());
+        }
+        if (currentPixel.getX() == PIXEL_ARRAY_WIDTH-1) {
+            upRight = upCenter;
+            right = null;
+            right_new_energy = 0;
+        } else {
+            upRight = PIXEL_ARRAY.get(currentPixel.getY() - 1).get(mod(currentPixel.getX() + 1, PIXEL_ARRAY_WIDTH));
+            right = PIXEL_ARRAY.get(currentPixel.getY()).get(mod(currentPixel.getX() + 1, PIXEL_ARRAY_WIDTH));
+            right_new_energy = Math.abs(upCenter.getEnergy() - right.getEnergy());
+        }
 
-        double FE_left = upLeft.getCumulativeEnergy() + currentPixel.getEnergy() + Math.abs(upCenter.getEnergy() - Left.getEnergy());
+        double FE_left = upLeft.getCumulativeEnergy() + currentPixel.getEnergy() + left_new_energy;
         double FE_center = upCenter.getCumulativeEnergy() + currentPixel.getEnergy();
-        double FE_right = upRight.getCumulativeEnergy() + currentPixel.getEnergy() + Math.abs(upCenter.getEnergy() - Right.getEnergy());
+        double FE_right = upRight.getCumulativeEnergy() + currentPixel.getEnergy() + right_new_energy;
 
         double minimumCFE = Math.min(Math.min(FE_left, FE_center), FE_right);
         if (minimumCFE == FE_left) {
@@ -152,15 +168,14 @@ public class SeamCarver {
         return new Pair<>(upRight, FE_right);
     }
 
-    public ArrayList<ArrayList<Pixel>> removeElements(ArrayList<Pair<Integer, Integer>> path, ArrayList<ArrayList<Pixel>> array) {
+    public void removeElements(ArrayList<Pair<Integer, Integer>> path) {
         for (int i = 0; i < path.size(); i++) {
             Pair<Integer, Integer> pair = path.get(i);
             int x = pair.getKey();
             int y = pair.getValue();
-            array.get(y).remove(x);
+            PIXEL_ARRAY.get(y).remove(x);
         }
         PIXEL_ARRAY_WIDTH--;
-        return array;
     }
 
     public double energyValueOf(int x, int y) {
@@ -202,7 +217,7 @@ public class SeamCarver {
         if (num >= 0) {
             return num % modulo;
         }
-        return modulo + num -1;
+        return modulo + num;
     }
 
     public ArrayList<Pair<Integer, Integer>> leastEnergyVerticalPath() {
@@ -229,8 +244,18 @@ public class SeamCarver {
         return path;
     }
 
+    public void setPixelArray(ArrayList<ArrayList<Pixel>> array) {
+        this.PIXEL_ARRAY = array;
+        this.PIXEL_ARRAY_WIDTH = array.get(0).size();
+        this.PIXEL_ARRAY_HEIGHT = array.size();
+    }
+
+    public ArrayList<ArrayList<Pixel>> getPixelArray(){
+        return this.PIXEL_ARRAY;
+    }
+
     public static void main(String[] args) {
-        SeamCarver carver = new SeamCarver("sample-images/sample6-input.jpg");
-        carver.carve(500, "sample-images/sample6-output.jpg");
+        SeamCarver carver = new SeamCarver("sample-images/sample5-input.jpg");
+        carver.carve(800, "sample-images/sample5-output.jpg");
     }
 }

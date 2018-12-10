@@ -2,6 +2,9 @@ package com.aziz;
 
 import javafx.util.Pair;
 
+/**
+ * A class to represent a pixel in an image to be cropped using Smart Crop
+ */
 public class Pixel {
 
     private int RGB;

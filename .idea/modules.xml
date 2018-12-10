@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Seam-Carver.iml" filepath="$PROJECT_DIR$/Seam-Carver.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Smart-Crop.iml" filepath="$PROJECT_DIR$/Smart-Crop.iml" />
     </modules>
   </component>
 </project>

@@ -1,7 +1,7 @@
 # Smart Crop
 
 ## Regular Crop
-![](samples/regular-crop.gif)
+![](https://media.giphy.com/media/39xHudBEcusHJp4TYj/giphy.gif)
 
 ## Smart Crop
 ![](samples/smart-crop.gif)

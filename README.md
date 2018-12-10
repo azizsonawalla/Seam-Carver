@@ -4,4 +4,4 @@
 ![](https://media.giphy.com/media/39xHudBEcusHJp4TYj/giphy.gif)
 
 ## Smart Crop
-![](samples/smart-crop.gif)
+![](https://media.giphy.com/media/7SQDK1xY8QAmfxQ5EX/giphy.gif)

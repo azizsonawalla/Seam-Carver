@@ -269,7 +269,7 @@ public class SmartCrop {
     private void updateAllPixelPositions() {
         for (int y = 0; y < PIXEL_ARRAY_HEIGHT; y++) {
             for (int x = 0; x < PIXEL_ARRAY_WIDTH; x++) {
-                Pixel currentPixel = PIXEL_ARRAY.get(y).get(x);
+               Pixel currentPixel = PIXEL_ARRAY.get(y).get(x);
                 currentPixel.setPos(new Pair<>(x,y));
             }
         }

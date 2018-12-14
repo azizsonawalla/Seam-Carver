@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.concurrent.CountDownLatch;
 
 public class SmartCropMultiThread {
 
@@ -52,10 +53,11 @@ public class SmartCropMultiThread {
         ArrayList<Pair<Integer, Integer>> path = new ArrayList<>();
         for (int col = 0; col < colsToRemove; col++) {
             printProgressBarToConsole("Cropping horizontally", col, colsToRemove);
-            updateAllPixelPositions();
             if (col==0) {
+                updateAllPixelPositions();
                 updateAllPixelEnergies();
             } else {
+                updateSelectedPixelPositions(path);
                 updateSelectedPixelEnergies(path);
             }
             calculateCumulativeEnergies();
@@ -224,24 +226,33 @@ public class SmartCropMultiThread {
      * Updates energies of pixels in PIXEL_ARRAY
      */
     private void updateAllPixelEnergies() {
-        ArrayList<Thread> threads = new ArrayList<>();
-        for (int y = 0; y < PIXEL_ARRAY_HEIGHT; y++) {
-            final int y_final = y;
-            Thread curr = new Thread(){
-                @Override
-                public void run(){
+        int load_division = PIXEL_ARRAY_HEIGHT/2;
+        Thread thread1 = new Thread() {
+            @Override
+            public void run() {
+                for (int y = 0; y < load_division; y++) {
                     for (int x = 0; x < PIXEL_ARRAY_WIDTH; x++) {
-                        Pixel currentPixel = PIXEL_ARRAY.get(y_final).get(x);
-                        currentPixel.setEnergy(energyValueOf(x, y_final));
+                        Pixel currentPixel = PIXEL_ARRAY.get(y).get(x);
+                        currentPixel.setPos(new Pair<>(x, y));
                     }
                 }
-            };
-            curr.run();
-            threads.add(curr);
-        }
-        for (Thread curr: threads) {
-            try {curr.join();} catch (Exception e){ System.out.println("Thread could not join");}
-        }
+            }
+        };
+        thread1.run();
+        Thread thread2 = new Thread() {
+            @Override
+            public void run() {
+                for (int y = load_division; y < PIXEL_ARRAY_HEIGHT; y++) {
+                    for (int x = 0; x < PIXEL_ARRAY_WIDTH; x++) {
+                        Pixel currentPixel = PIXEL_ARRAY.get(y).get(x);
+                        currentPixel.setPos(new Pair<>(x, y));
+                    }
+                }
+            }
+        };
+        thread2.run();
+        try {thread1.join();} catch (Exception e){ System.out.println("Thread could not join");}
+        try {thread2.join();} catch (Exception e){ System.out.println("Thread could not join");}
     }
 
     /**
@@ -254,7 +265,6 @@ public class SmartCropMultiThread {
         for (int i = 0; i < path.size(); i++) {
             Pair<Integer,Integer> pos = path.get(i);
             int pos_key = pos.getKey();
-            int pos_val = pos.getValue();
             if (i==0){
                 x_min = pos_key;
                 x_max = pos_key;
@@ -263,28 +273,38 @@ public class SmartCropMultiThread {
                 x_max = Math.max(x_max, pos_key);
             }
         }
-        final int x_max_final = x_max+2;
-        final int x_min_final = x_min-2;
+        final int x_max_final = x_max + 2;
+        final int x_min_final = x_min - 2;
 
-        ArrayList<Thread> threads = new ArrayList<>();
-        for (int y = 0; y < PIXEL_ARRAY_HEIGHT; y++) {
-            final int y_final = y;
-            Thread curr = new Thread(){
-                @Override
-                public void run(){
+        int load_division = PIXEL_ARRAY_HEIGHT/2;
+        Thread thread1 = new Thread() {
+            @Override
+            public void run() {
+                for (int y = 0; y < load_division; y++) {
                     for (int x = x_min_final; x <= x_max_final; x++) {
                         int mod_x = mod(x, PIXEL_ARRAY_WIDTH);
-                        Pixel currentPixel = PIXEL_ARRAY.get(y_final).get(mod_x);
-                        currentPixel.setEnergy(energyValueOf(mod_x, y_final));
+                        Pixel currentPixel = PIXEL_ARRAY.get(y).get(mod_x);
+                        currentPixel.setEnergy(energyValueOf(mod_x, y));
                     }
                 }
-            };
-            curr.run();
-            threads.add(curr);
-        }
-        for (Thread curr: threads) {
-            try {curr.join();} catch (Exception e){ System.out.println("Thread could not join");}
-        }
+            }
+        };
+        thread1.run();
+        Thread thread2 = new Thread() {
+            @Override
+            public void run() {
+                for (int y = load_division; y < PIXEL_ARRAY_HEIGHT; y++) {
+                    for (int x = x_min_final; x <= x_max_final; x++) {
+                        int mod_x = mod(x, PIXEL_ARRAY_WIDTH);
+                        Pixel currentPixel = PIXEL_ARRAY.get(y).get(mod_x);
+                        currentPixel.setEnergy(energyValueOf(mod_x, y));
+                    }
+                }
+            }
+        };
+        thread2.run();
+        try {thread1.join();} catch (Exception e){ System.out.println("Thread could not join");}
+        try {thread2.join();} catch (Exception e){ System.out.println("Thread could not join");}
     }
 
     /**
@@ -295,6 +315,20 @@ public class SmartCropMultiThread {
             for (int x = 0; x < PIXEL_ARRAY_WIDTH; x++) {
                 Pixel currentPixel = PIXEL_ARRAY.get(y).get(x);
                 currentPixel.setPos(new Pair<>(x,y));
+            }
+        }
+    }
+
+    /**
+     * Updates positions of selected pixels in PIXEL_ARRAY
+     */
+    private void updateSelectedPixelPositions(ArrayList<Pair<Integer,Integer>> path) {
+        for (Pair<Integer, Integer> pos: path) {
+            int x_start = pos.getKey();
+            int y = pos.getValue();
+            for (int x = x_start; x < PIXEL_ARRAY_WIDTH; x++) {
+                Pixel currentPixel = PIXEL_ARRAY.get(y).get(x);
+                currentPixel.setPos(new Pair<>(x, y));
             }
         }
     }
@@ -350,9 +384,9 @@ public class SmartCropMultiThread {
 
     public static void main(String[] args) {
         long startTime = System.nanoTime();
-        SmartCropMultiThread smartCrop = new SmartCropMultiThread("sample-images-tests/sample4-input.jpg");
-        smartCrop.horizontalCrop(395);
-        smartCrop.saveCroppedImage("sample-images-tests/sample4-output-multi.png");
+        SmartCropMultiThread smartCrop = new SmartCropMultiThread("sample-images-tests/sample6-input.jpg");
+        smartCrop.horizontalCrop(500);
+        smartCrop.saveCroppedImage("sample-images-tests/sample6-output-multi.png");
         long endTime = System.nanoTime();
         System.out.println("Operation took " + (endTime-startTime) + " nanoseconds");
     }

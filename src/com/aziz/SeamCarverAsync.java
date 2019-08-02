@@ -383,9 +383,9 @@ public class SeamCarverAsync {
 
     public static void main(String[] args) {
         long startTime = System.nanoTime();
-        SeamCarverAsync smartCrop = new SeamCarverAsync("sample-images-tests/sample6-input.jpg");
-        smartCrop.horizontalCrop(500);
-        smartCrop.saveCroppedImage("sample-images-tests/sample6-output-multi.png");
+        SeamCarverAsync smartCrop = new SeamCarverAsync("samples/sample1.jpg");
+        smartCrop.horizontalCrop(300);
+        smartCrop.saveCroppedImage("samples/sample1-out.png");
         long endTime = System.nanoTime();
         System.out.println("Operation took " + (endTime-startTime) + " nanoseconds");
     }

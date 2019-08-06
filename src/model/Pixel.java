@@ -1,4 +1,4 @@
-package com.aziz;
+package model;
 
 import javafx.util.Pair;
 

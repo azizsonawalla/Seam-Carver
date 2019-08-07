@@ -2,7 +2,6 @@ package gui;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -11,11 +10,14 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         FXMLLoader loader = new FXMLLoader(getClass().getResource("scene.fxml"));
-        loader.setController(new Controller());
-        Parent root = loader.load();
-        primaryStage.setTitle("Hello World");
-        Scene scene = new Scene(root, 300, 275);
+        Controller controller = new Controller();
+        loader.setController(controller);
+        primaryStage.setTitle("Seam Carver");
+        Scene scene = new Scene(loader.load(), 1200, 900);
+        primaryStage.setResizable(false);
         primaryStage.setScene(scene);
+        controller.init();
+        controller.setStage(primaryStage);
         primaryStage.show();
     }
 

@@ -21,8 +21,7 @@ public class Image {
     // Vertical pixel paths from least energy to highest energy
     private ArrayList<ArrayList<Pair<Integer, Integer>>> colsToRemove;
 
-    public Image(String path) {
-        File imageFile = new File(path);
+    public Image(File imageFile) {
         BufferedImage originalImage;
         try {
             originalImage = ImageIO.read(imageFile);
@@ -33,6 +32,14 @@ public class Image {
         ogImage = new EnergyMap(originalImage);
         PathCalculator calculator = new PathCalculator(new EnergyMap(ogImage));
         colsToRemove = calculator.getPaths();
+    }
+
+    public int width() {
+        return ogImage.width();
+    }
+
+    public int height() {
+        return ogImage.height();
     }
 
     public BufferedImage getCropped(Double relativePixels) throws Exception {
@@ -74,7 +81,7 @@ public class Image {
 
     public static void main(String[] args) {
         long startTime = System.nanoTime();
-        Image image = new Image("samples/sample1.jpg");
+        Image image = new Image(new File("samples/sample1.jpg"));
         long endTime1 = System.nanoTime();
         System.out.println("Initialization took " + (endTime1-startTime) + " nanoseconds");
         image.horizontalCrop(300);

@@ -8,23 +8,28 @@ import javafx.util.Pair;
 public class Pixel {
 
     private int RGB;
-    private int X;
-    private int Y;
+    private int X = -1;
+    private int Y = -1;
     private double ENERGY;
     private double CUMULATIVE_ENERGY;
 
+    private int originalX;
+    private int originalY;
+
+    private boolean active = true;
+
     public Pixel(int rgb, int x, int y, double energy, double cumulative_energy) {
-        this.RGB = rgb;
-        this.X = x;
-        this.Y = y;
-        this.ENERGY = energy;
-        this.CUMULATIVE_ENERGY = cumulative_energy;
+        RGB = rgb;
+        X = originalX = x;
+        Y = originalY = y;
+        ENERGY = energy;
+        CUMULATIVE_ENERGY = cumulative_energy;
     }
 
     public Pixel(int rgb, int x, int y) {
         this.RGB = rgb;
-        this.X = x;
-        this.Y = y;
+        X = originalX = x;
+        Y = originalY = y;
     }
 
     public Pixel(int rgb) {
@@ -47,10 +52,6 @@ public class Pixel {
         return (getRGB()) & 0xFF;
     }
 
-    public int getAlpha() {
-        return (getRGB() >> 24) & 0xff;
-    }
-
     public int getX() {
         return this.X;
     }
@@ -71,21 +72,14 @@ public class Pixel {
         return this.CUMULATIVE_ENERGY;
     }
 
-    public void setRGB(int rgb) {
-        this.RGB = rgb;
-    }
-
-    public void setX(int x) {
-        this.X = x;
-    }
-
-    public void setY(int y) {
-        this.Y = y;
-    }
-
     public void setPos(Pair<Integer,Integer> pos) {
-        this.X = pos.getKey();
-        this.Y = pos.getValue();
+        if (X == -1 || Y == -1) {
+            X = originalX = pos.getKey();
+            Y = originalY = pos.getValue();
+        } else {
+            X = pos.getKey();
+            Y = pos.getValue();
+        }
     }
 
     public void setEnergy(double energy) {
@@ -94,5 +88,13 @@ public class Pixel {
 
     public void setCumulativeEnergy(double cumulativeEnergy) {
         this.CUMULATIVE_ENERGY = cumulativeEnergy;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

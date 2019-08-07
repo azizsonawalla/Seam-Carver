@@ -16,7 +16,7 @@ public class Main extends Application {
         Scene scene = new Scene(loader.load(), 1200, 900);
         primaryStage.setResizable(false);
         primaryStage.setScene(scene);
-        controller.init();
+        controller.initializeUIElements();
         controller.setStage(primaryStage);
         primaryStage.show();
     }

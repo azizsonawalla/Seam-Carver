@@ -12,16 +12,20 @@ import model.Image;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-// TODO: Put all tasks into worker pool
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Controller {
 
     private Image image;
+    private ReadWriteLock imageLock;
     private Stage stage;
     private ExecutorService workerPool;
+    private Map<Double, BufferedImage> cache = new HashMap<>();
 
     @FXML private Button loadImageButton;
     @FXML private ImageView imageView;
@@ -29,9 +33,14 @@ public class Controller {
 
     public Controller() {
         workerPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        imageLock = new ReentrantReadWriteLock();
     }
 
-    public void init() {
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
+    public void initializeUIElements() {
         loadImageButton.setOnAction(event -> openFileChooser());
 
         slider.setMin(-1);
@@ -40,25 +49,30 @@ public class Controller {
         slider.valueProperty().addListener((observable, oldValue, newValue) -> refreshImageView());
     }
 
-    public void setStage(Stage stage) {
-        this.stage = stage;
-    }
-
     private void openFileChooser() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select Image");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg"));
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg");
+        fileChooser.getExtensionFilters().add(filter);
         File selectedFile = fileChooser.showOpenDialog(stage);
 
         if (selectedFile != null) {
             workerPool.execute(() -> {
                 // TODO: Show loading bar
-                image = new Image(selectedFile);
+                imageLock.writeLock().lock();
+                try {
+                    image = new Image(selectedFile);
+                } catch (Exception e) {
+                    // TODO: Show error
+                } finally {
+                    imageLock.writeLock().unlock();
+                }
                 refreshImageView();
                 Platform.runLater(() -> {
-                    slider.setMin(-image.width());
+                    int min = -image.width()+50;
+                    slider.setMin(min);
                     slider.setValue(0);
-                    slider.setBlockIncrement(1.0);
+                    slider.setBlockIncrement(5.0);
                     slider.setMinorTickCount(1);
                     slider.setShowTickMarks(true);
                 });
@@ -70,10 +84,23 @@ public class Controller {
         workerPool.execute(() -> {
             try {
                 Double relativePixels = slider.getValue();
-                BufferedImage newPreview = image.getCropped(relativePixels);
-                imageView.setImage(SwingFXUtils.toFXImage(newPreview, null));
+                BufferedImage newPreview;
+                if (cache.containsKey(relativePixels)) {
+                    newPreview = cache.get(relativePixels);
+                    imageView.setImage(SwingFXUtils.toFXImage(newPreview, null));
+                } else {
+                    try {
+                        newPreview = image.getCropped(relativePixels);
+                        cache.put(relativePixels, newPreview);
+                        imageView.setImage(SwingFXUtils.toFXImage(newPreview, null));
+                    } catch (Exception e) {
+                        // TODO: Show error
+                    } finally {
+                        imageLock.writeLock().unlock();
+                    }
+                }
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                // TODO: Show error
             }
         });
     }

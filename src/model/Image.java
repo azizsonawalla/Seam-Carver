@@ -41,19 +41,18 @@ public class Image {
         return energyMap.height();
     }
 
+    public void saveCroppedImage(Double relativePixels, String imagePathOut) throws Exception {
+        BufferedImage image = getCropped(relativePixels);
+        ImageIO.write(image, "png", new File(imagePathOut)); // TODO: Change to other library
+    }
+
     public BufferedImage getCropped(Double relativePixels) throws Exception {
-        // TODO
         if (relativePixels > 0) {
             throw new Exception("Upscaling not supported yet");
         } else {
             int colsToRemove = (int)Math.abs(relativePixels);
             return this.getDownScaled(colsToRemove);
         }
-    }
-
-    public void saveCroppedImage(Double relativePixels, String imagePathOut) throws Exception {
-        BufferedImage image = getCropped(relativePixels);
-        ImageIO.write(image, "png", new File(imagePathOut)); // TODO: Change to other library
     }
 
     private BufferedImage getDownScaled(int colsToRemove) throws Exception {

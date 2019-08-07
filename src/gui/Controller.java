@@ -19,14 +19,25 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+/**
+ * Controller class for JavaFX GUI
+ *
+ * @author Aziz Sonawalla
+ */
 public class Controller {
 
+    // Image object for image currently being edited
     private Image image;
+    // Image object lock for concurrent access
     private ReadWriteLock imageLock;
-    private Stage stage;
-    private ExecutorService workerPool;
-    private Map<Double, BufferedImage> cache = new HashMap<>();
 
+    // Cache of preview images for faster previews
+    private Map<Double, BufferedImage> cache;
+
+    // Thread pool for background tasks
+    private ExecutorService workerPool;
+
+    private Stage stage;
     @FXML private Button loadImageButton;
     @FXML private ImageView imageView;
     @FXML private Slider slider;
@@ -34,52 +45,68 @@ public class Controller {
     public Controller() {
         workerPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         imageLock = new ReentrantReadWriteLock();
+        cache = new HashMap<>();
     }
 
     public void setStage(Stage stage) {
         this.stage = stage;
     }
 
+    /**
+     * Initialize JavaFX GUI elements with present values
+     * and add event listeners
+     */
     public void initializeUIElements() {
         loadImageButton.setOnAction(event -> openFileChooser());
-
-        slider.setMin(-1);
-        slider.setMax(0);
-        slider.setValue(0);
-        slider.valueProperty().addListener((observable, oldValue, newValue) -> refreshImageView());
+        slider.setVisible(false);
     }
 
+    /**
+     * Display file chooser interface, capture input, and render
+     * a new preview
+     */
     private void openFileChooser() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select Image");
         FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg");
         fileChooser.getExtensionFilters().add(filter);
         File selectedFile = fileChooser.showOpenDialog(stage);
-
         if (selectedFile != null) {
-            workerPool.execute(() -> {
-                // TODO: Show loading bar
-                imageLock.writeLock().lock();
-                try {
-                    image = new Image(selectedFile);
-                } catch (Exception e) {
-                    // TODO: Show error
-                } finally {
-                    imageLock.writeLock().unlock();
-                }
-                refreshImageView();
-                Platform.runLater(() -> {
-                    int min = -image.width()+50;
-                    slider.setMin(min);
-                    slider.setValue(0);
-                    slider.setBlockIncrement(5.0);
-                    slider.setMinorTickCount(1);
-                    slider.setShowTickMarks(true);
-                });
-            });
+            workerPool.execute(() -> initializeImageObject(selectedFile));
         }
     }
 
+    /**
+     * Instantiate the Image object with the given image file
+     * @param imageFile image file to instantiate Image object with
+     */
+    private void initializeImageObject(File imageFile) {
+        // TODO: Show loading bar
+        imageLock.writeLock().lock();
+        try {
+            image = new Image(imageFile);
+        } catch (Exception e) {
+            // TODO: Show error pop-up on GUI
+        } finally {
+            imageLock.writeLock().unlock();
+        }
+        refreshImageView();
+        Platform.runLater(() -> {
+            slider.setMin( -image.width()+50);
+            slider.setMax(0);
+            slider.setValue(0);
+            slider.setBlockIncrement(10.0);
+            slider.setMinorTickCount(1);
+            slider.setShowTickMarks(true);
+            slider.valueProperty().addListener((observable, oldValue, newValue) -> refreshImageView());
+            slider.setVisible(true);
+        });
+    }
+
+    /**
+     * Get the current value of the slider and update the preview
+     * image with the cropped version of the image
+     */
     private void refreshImageView() {
         workerPool.execute(() -> {
             try {
@@ -90,11 +117,12 @@ public class Controller {
                     imageView.setImage(SwingFXUtils.toFXImage(newPreview, null));
                 } else {
                     try {
+                        imageLock.writeLock().lock();
                         newPreview = image.getCropped(relativePixels);
                         cache.put(relativePixels, newPreview);
                         imageView.setImage(SwingFXUtils.toFXImage(newPreview, null));
                     } catch (Exception e) {
-                        // TODO: Show error
+                        // TODO: Show error pop-up on GUI
                     } finally {
                         imageLock.writeLock().unlock();
                     }

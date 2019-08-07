@@ -1,7 +1,6 @@
 package gui;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -56,16 +55,21 @@ public class Controller {
                 // TODO: Show loading bar
                 image = new Image(selectedFile);
                 refreshImageView();
-                slider.setMin(-image.width());
-                slider.setValue(0);
+                Platform.runLater(() -> {
+                    slider.setMin(-image.width());
+                    slider.setValue(0);
+                    slider.setBlockIncrement(1.0);
+                    slider.setMinorTickCount(1);
+                    slider.setShowTickMarks(true);
+                });
             });
         }
     }
 
     private void refreshImageView() {
         workerPool.execute(() -> {
-            Double relativePixels = slider.getValue();
             try {
+                Double relativePixels = slider.getValue();
                 BufferedImage newPreview = image.getCropped(relativePixels);
                 imageView.setImage(SwingFXUtils.toFXImage(newPreview, null));
             } catch (Exception e) {
@@ -75,11 +79,13 @@ public class Controller {
     }
 
     private void save() {
-        String pathOut = ""; // TODO: Get from dialog
-        try {
-            image.saveCroppedImage(pathOut);
-        } catch (Exception e) {
-            // TODO: Show error message
-        }
+        workerPool.execute(() -> {
+            Double relativePixels = slider.getValue();
+            try {
+                image.saveCroppedImage(relativePixels, ""); // TODO: Get path from dialog
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        });
     }
 }

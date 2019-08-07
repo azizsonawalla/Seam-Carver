@@ -15,14 +15,20 @@ public class PathCalculator {
     public  ArrayList<ArrayList<Pair<Integer, Integer>>> getPaths() {
         ArrayList<ArrayList<Pair<Integer, Integer>>> paths = new ArrayList<>();
         energyMap.updateAllPixelEnergies();
-        ArrayList<Pair<Integer, Integer>> path;
+        ArrayList<Pixel> pixelPath;
         int originalWidth = energyMap.width();
+
         for (int col = 0; col < originalWidth-1; col++) {
-            path = energyMap.leastEnergyVerticalPath();
-            energyMap.removeElements(path);
-            paths.add(path);
-            energyMap.updateSelectedPixelPositions(path);
-            energyMap.updateSelectedPixelEnergies(path);
+            pixelPath = energyMap.leastEnergyVerticalPath();
+            ArrayList<Pair<Integer, Integer>> currPosPath = new ArrayList<>();
+            for (Pixel pixel: pixelPath) currPosPath.add(pixel.getPos());
+            ArrayList<Pair<Integer, Integer>> originalPosPath = new ArrayList<>();
+            for (Pixel pixel: pixelPath) originalPosPath.add(pixel.getOriginalPos());
+
+            energyMap.removePixels(currPosPath);
+            paths.add(originalPosPath);
+            energyMap.updateSelectedPixelPositions(currPosPath);
+            energyMap.updateSelectedPixelEnergies(currPosPath);
         }
         return paths;
     }

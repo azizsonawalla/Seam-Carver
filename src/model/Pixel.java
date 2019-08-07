@@ -64,6 +64,10 @@ public class Pixel {
         return new Pair<>(this.X, this.Y);
     }
 
+    public Pair<Integer, Integer> getOriginalPos() {
+        return new Pair<>(this.originalX, this.originalY);
+    }
+
     public double getEnergy() {
         return this.ENERGY;
     }

@@ -54,11 +54,23 @@ public class EnergyMap {
         return data.get(y);
     }
 
-    public void removeElements(ArrayList<Pair<Integer, Integer>> elements) {
-        for (Pair<Integer, Integer> pair : elements) {
+    public void removePixels(ArrayList<Pair<Integer, Integer>> positions) {
+        for (Pair<Integer, Integer> pair : positions) {
             int x = pair.getKey();
             int y = pair.getValue();
             getPixelRow(y).remove(x);
+        }
+    }
+
+    public void setInactivePixels(ArrayList<Pair<Integer, Integer>> positions) {
+        for (int y = 0; y < height(); y++) {
+            for (int x = 0; x < width(); x++) {
+                Pixel currentPixel = getPixel(x, y);
+                currentPixel.setActive(true);
+            }
+        }
+        for (Pair<Integer, Integer> pos: positions) {
+            getPixel(pos.getKey(), pos.getValue()).setActive(false);
         }
     }
 
@@ -121,7 +133,7 @@ public class EnergyMap {
         return deltaX + deltaY;
     }
 
-    public ArrayList<Pair<Integer, Integer>> leastEnergyVerticalPath() {
+    public ArrayList<Pixel> leastEnergyVerticalPath() {
         ArrayList<ArrayList<Pair<Integer, Integer>>> backtrackingMatrix = generateBacktrackingMatrix();
         ArrayList<Pixel> lastRow = getPixelRow(height() - 1);
 
@@ -135,9 +147,9 @@ public class EnergyMap {
 
         Pair<Integer, Integer> currentPos = minimumCEPixel.getPos(); // start point of path
         Pair<Integer, Integer> nextPos = backtrackingMatrix.get(currentPos.getValue()).get(currentPos.getKey());
-        ArrayList<Pair<Integer, Integer>> path = new ArrayList<>();
+        ArrayList<Pixel> path = new ArrayList<>();
         while (currentPos != nextPos) {
-            path.add(currentPos);
+            path.add(getPixel(currentPos.getKey(),currentPos.getValue()));
             currentPos = nextPos;
             nextPos = backtrackingMatrix.get(currentPos.getValue()).get(currentPos.getKey());
         }

@@ -5,7 +5,6 @@ import javafx.util.Pair;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -16,10 +15,10 @@ import java.util.ArrayList;
 public class Image {
 
     // 2D array with Pixel information of the original image
-    private EnergyMap ogImage;
+    private EnergyMap energyMap;
 
     // Vertical pixel paths from least energy to highest energy
-    private ArrayList<ArrayList<Pair<Integer, Integer>>> colsToRemove;
+    private ArrayList<ArrayList<Pair<Integer, Integer>>> pixelPathsOrderedByEnergy;
 
     public Image(File imageFile) {
         BufferedImage originalImage;
@@ -29,17 +28,17 @@ public class Image {
             System.err.print(e.getMessage());
             return;
         }
-        ogImage = new EnergyMap(originalImage);
-        PathCalculator calculator = new PathCalculator(new EnergyMap(ogImage));
-        colsToRemove = calculator.getPaths();
+        energyMap = new EnergyMap(originalImage);
+        PathCalculator calculator = new PathCalculator(new EnergyMap(energyMap));
+        pixelPathsOrderedByEnergy = calculator.getPaths();
     }
 
     public int width() {
-        return ogImage.width();
+        return energyMap.width();
     }
 
     public int height() {
-        return ogImage.height();
+        return energyMap.height();
     }
 
     public BufferedImage getCropped(Double relativePixels) throws Exception {
@@ -47,34 +46,42 @@ public class Image {
         if (relativePixels > 0) {
             throw new Exception("Upscaling not supported yet");
         } else {
-            int pixelsToRemove = (int)Math.abs(relativePixels);
-            this.horizontalCrop(pixelsToRemove);
-            return getArrayAsImage();
+            int colsToRemove = (int)Math.abs(relativePixels);
+            return this.getDownScaled(colsToRemove);
         }
     }
 
-    public void saveCroppedImage(String imagePathOut) throws IOException {
-        BufferedImage image = getArrayAsImage();
+    public void saveCroppedImage(Double relativePixels, String imagePathOut) throws Exception {
+        BufferedImage image = getCropped(relativePixels);
         ImageIO.write(image, "png", new File(imagePathOut)); // TODO: Change to other library
     }
 
-    private void horizontalCrop(int remove) {
+    private BufferedImage getDownScaled(int colsToRemove) throws Exception {
         /* check for out-of-bounds crop */
-        if (colsToRemove.size() < remove){
-            System.out.println("Error: Cannot crop further than width of image.");
-            return;
+        if (pixelPathsOrderedByEnergy.size() < colsToRemove){
+            throw new Exception("Unsupported operation: Upscaling not implemented");
         }
-        for (int col = 0; col < remove; col++) {
-            ogImage.removeElements(colsToRemove.get(col));
+        ArrayList<Pair<Integer, Integer>> pixelsToRemove = new ArrayList<>();
+        for (int col = 0; col < colsToRemove; col++) {
+            pixelsToRemove.addAll(pixelPathsOrderedByEnergy.get(col));
         }
+        energyMap.setInactivePixels(pixelsToRemove);
+        return getArrayAsImage(energyMap.width()-colsToRemove, energyMap.height());
     }
 
-    private BufferedImage getArrayAsImage() {
-        BufferedImage image = new BufferedImage(ogImage.width(), ogImage.height(), BufferedImage.TYPE_INT_ARGB);
-        for (int y = 0; y < ogImage.height(); y++) {
-            for (int x = 0; x < ogImage.width(); x++) {
-                image.setRGB(x, y, ogImage.getPixel(x,y).getRGB());
+    private BufferedImage getArrayAsImage(int width, int height) {
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        int x = 0;
+        int y = 0;
+        for (ArrayList<Pixel> row: energyMap.getData()) {
+            for (Pixel pixel: row) {
+                if (pixel.isActive()) {
+                    image.setRGB(x, y, pixel.getRGB());
+                    x++;
+                }
             }
+            x=0;
+            y++;
         }
         return image;
     }
@@ -84,9 +91,12 @@ public class Image {
         Image image = new Image(new File("samples/sample1.jpg"));
         long endTime1 = System.nanoTime();
         System.out.println("Initialization took " + (endTime1-startTime) + " nanoseconds");
-        image.horizontalCrop(300);
         try {
-            image.saveCroppedImage("samples/sample1-out3.png");
+            image.saveCroppedImage(-300.0,"samples/sample1-out3.png");
+            image.saveCroppedImage(-400.0,"samples/sample1-out4.png");
+            image.saveCroppedImage(-200.0,"samples/sample1-out5.png");
+            image.saveCroppedImage(-150.0,"samples/sample1-out6.png");
+            image.saveCroppedImage(-500.0,"samples/sample1-out7.png");
         } catch (Exception e) {
             System.out.println("Couldn't save image: " + e.getMessage());
         }

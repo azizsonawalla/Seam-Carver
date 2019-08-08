@@ -92,6 +92,7 @@ public class Controller {
             image = new Image(scaledBufferedImage);
         } catch (Exception e) {
             // TODO: Show error pop-up on GUI
+            return;
         } finally {
             imageLock.writeLock().unlock();
         }

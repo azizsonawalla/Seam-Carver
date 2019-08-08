@@ -5,15 +5,29 @@ import javafx.util.Pair;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-public class EnergyMap {
+/**
+ * A matrix containing energy data for Pixels
+ *
+ * @author Aziz Sonawalla
+ */
+public class EnergyMatrix {
 
+    // Underlying Pixel data
     private ArrayList<ArrayList<Pixel>> data;
 
-    public EnergyMap(ArrayList<ArrayList<Pixel>> data) {
+    /**
+     * Construct EnergyMatrix from existing pixel data
+     * @param data Pixel data
+     */
+    public EnergyMatrix(ArrayList<ArrayList<Pixel>> data) {
         this.data = data;
     }
 
-    public EnergyMap(EnergyMap other) {
+    /**
+     * Copy Constructor
+     * @param other EnergyMatrix to clone
+     */
+    public EnergyMatrix(EnergyMatrix other) {
         data = new ArrayList<>();
         for (ArrayList<Pixel> row: other.getData()) {
             ArrayList<Pixel> newRow = new ArrayList<>(row);
@@ -21,7 +35,11 @@ public class EnergyMap {
         }
     }
 
-    public EnergyMap(BufferedImage image) {
+    /**
+     * Construct EnergyMatrix from an image
+     * @param image image to parse
+     */
+    public EnergyMatrix(BufferedImage image) {
         data = new ArrayList<>();
         for (int y = 0; y < image.getHeight(); y++) {
             ArrayList<Pixel> row = new ArrayList<>();

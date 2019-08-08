@@ -16,23 +16,23 @@ import java.util.ArrayList;
 public class Image {
 
     // 2D array with Pixel information of the original image
-    private EnergyMap energyMap;
+    private EnergyMatrix energyMatrix;
 
     // Vertical pixel paths from least energy to highest energy
     private ArrayList<ArrayList<Pair<Integer, Integer>>> pixelPathsOrderedByEnergy;
 
     public Image(BufferedImage originalImage) {
-        energyMap = new EnergyMap(originalImage);
-        PathCalculator calculator = new PathCalculator(new EnergyMap(energyMap));
+        energyMatrix = new EnergyMatrix(originalImage);
+        PathCalculator calculator = new PathCalculator(new EnergyMatrix(energyMatrix));
         pixelPathsOrderedByEnergy = calculator.getPaths();
     }
 
     public int width() {
-        return energyMap.width();
+        return energyMatrix.width();
     }
 
     public int height() {
-        return energyMap.height();
+        return energyMatrix.height();
     }
 
     public void saveCroppedImage(Double relativePixels, String imagePathOut) throws Exception {
@@ -58,15 +58,15 @@ public class Image {
         for (int col = 0; col < colsToRemove; col++) {
             pixelsToRemove.addAll(pixelPathsOrderedByEnergy.get(col));
         }
-        energyMap.setInactivePixels(pixelsToRemove);
-        return getArrayAsImage(energyMap.width()-colsToRemove, energyMap.height());
+        energyMatrix.setInactivePixels(pixelsToRemove);
+        return getArrayAsImage(energyMatrix.width()-colsToRemove, energyMatrix.height());
     }
 
     private BufferedImage getArrayAsImage(int width, int height) {
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         int x = 0;
         int y = 0;
-        for (ArrayList<Pixel> row: energyMap.getData()) {
+        for (ArrayList<Pixel> row: energyMatrix.getData()) {
             for (Pixel pixel: row) {
                 if (pixel.isActive()) {
                     image.setRGB(x, y, pixel.getRGB());

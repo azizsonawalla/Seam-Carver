@@ -1,6 +1,7 @@
 package model;
 
 import javafx.util.Pair;
+import util.ImageUtil;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -20,14 +21,7 @@ public class Image {
     // Vertical pixel paths from least energy to highest energy
     private ArrayList<ArrayList<Pair<Integer, Integer>>> pixelPathsOrderedByEnergy;
 
-    public Image(File imageFile) {
-        BufferedImage originalImage;
-        try {
-            originalImage = ImageIO.read(imageFile);
-        } catch (Exception e) {
-            System.err.print(e.getMessage());
-            return;
-        }
+    public Image(BufferedImage originalImage) {
         energyMap = new EnergyMap(originalImage);
         PathCalculator calculator = new PathCalculator(new EnergyMap(energyMap));
         pixelPathsOrderedByEnergy = calculator.getPaths();
@@ -87,7 +81,7 @@ public class Image {
 
     public static void main(String[] args) {
         long startTime = System.nanoTime();
-        Image image = new Image(new File("samples/sample1.jpg"));
+        Image image = new Image(ImageUtil.readFromFile(new File("samples/sample1.jpg")));
         long endTime1 = System.nanoTime();
         System.out.println("Initialization took " + (endTime1-startTime) + " nanoseconds");
         try {

@@ -1,6 +1,7 @@
 package model;
 
 import javafx.util.Pair;
+import util.Position;
 
 /**
  * A class to represent a pixel in an image to be cropped using Smart Crop
@@ -13,23 +14,24 @@ public class Pixel {
     private double ENERGY;
     private double CUMULATIVE_ENERGY;
 
-    private int originalX;
-    private int originalY;
+    private Position originalPosition;
 
     private boolean active = true;
 
     public Pixel(int rgb, int x, int y, double energy, double cumulative_energy) {
         RGB = rgb;
-        X = originalX = x;
-        Y = originalY = y;
+        originalPosition = new Position(x,y);
+        X = x;
+        Y = y;
         ENERGY = energy;
         CUMULATIVE_ENERGY = cumulative_energy;
     }
 
     public Pixel(int rgb, int x, int y) {
         this.RGB = rgb;
-        X = originalX = x;
-        Y = originalY = y;
+        originalPosition = new Position(x,y);
+        X = x;
+        Y = y;
     }
 
     public Pixel(int rgb) {
@@ -65,7 +67,7 @@ public class Pixel {
     }
 
     public Pair<Integer, Integer> getOriginalPos() {
-        return new Pair<>(this.originalX, this.originalY);
+        return new Pair<>(originalPosition.x, originalPosition.y);
     }
 
     public double getEnergy() {
@@ -77,13 +79,11 @@ public class Pixel {
     }
 
     public void setPos(Pair<Integer,Integer> pos) {
-        if (X == -1 || Y == -1) {
-            X = originalX = pos.getKey();
-            Y = originalY = pos.getValue();
-        } else {
-            X = pos.getKey();
-            Y = pos.getValue();
+        if (originalPosition == null) {
+            originalPosition = new Position(pos.getKey(),pos.getValue());
         }
+        X = pos.getKey();
+        Y = pos.getValue();
     }
 
     public void setEnergy(double energy) {

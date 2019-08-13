@@ -9,11 +9,10 @@ import util.Position;
 public class Pixel {
 
     private int RGB;
-    private int X = -1;
-    private int Y = -1;
     private double ENERGY;
     private double CUMULATIVE_ENERGY;
 
+    private Position position;
     private Position originalPosition;
 
     private boolean active = true;
@@ -21,8 +20,7 @@ public class Pixel {
     public Pixel(int rgb, int x, int y, double energy, double cumulative_energy) {
         RGB = rgb;
         originalPosition = new Position(x,y);
-        X = x;
-        Y = y;
+        position = new Position(x,y);
         ENERGY = energy;
         CUMULATIVE_ENERGY = cumulative_energy;
     }
@@ -30,8 +28,7 @@ public class Pixel {
     public Pixel(int rgb, int x, int y) {
         this.RGB = rgb;
         originalPosition = new Position(x,y);
-        X = x;
-        Y = y;
+        position = new Position(x,y);
     }
 
     public Pixel(int rgb) {
@@ -55,15 +52,15 @@ public class Pixel {
     }
 
     public int getX() {
-        return this.X;
+        return position.x;
     }
 
     public int getY() {
-        return this.Y;
+        return position.y;
     }
 
     public Pair<Integer,Integer> getPos() {
-        return new Pair<>(this.X, this.Y);
+        return new Pair<>(position.x, position.y);
     }
 
     public Pair<Integer, Integer> getOriginalPos() {
@@ -82,8 +79,7 @@ public class Pixel {
         if (originalPosition == null) {
             originalPosition = new Position(pos.getKey(),pos.getValue());
         }
-        X = pos.getKey();
-        Y = pos.getValue();
+        position = new Position(pos.getKey(),pos.getValue());
     }
 
     public void setEnergy(double energy) {

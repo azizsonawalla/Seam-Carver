@@ -1,6 +1,6 @@
 # Seam Carver - Content-aware image resizing
 
-An optimized and improved implementation of the [seam-carving algorithm first presented by Shamir and Avidan](http://www.faculty.idc.ac.il/arik/SCWeb/imret/imret.pdf) (Mitsubishi Labs) to create faster renders and provide real-time previews.
+An optimized and improved implementation of the [seam-carving algorithm (Shamir and Avidan, Mitsubishi Labs, 2007)](http://www.faculty.idc.ac.il/arik/SCWeb/imret/imret.pdf) to create faster renders and provide real-time previews.
 
 ## Try out the GUI application
 
@@ -24,6 +24,8 @@ The seam carving algorithm dynamically assigns a weight to all the pixels in an 
 For a more detailed explanation of the original algorithm, please see [this document](http://www.faculty.idc.ac.il/arik/SCWeb/imret/imret.pdf).
 
 ### Energy function for this implementation
+
+This implementation uses the improved forward-energy formula as [described in this paper](http://www.eng.tau.ac.il/~avidan/papers/vidret.pdf)
 
 ### Using Djikstra's shortest-path algorithm to find seams
 

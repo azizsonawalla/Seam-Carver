@@ -25,25 +25,37 @@ For a more detailed explanation of the original algorithm, please see [this docu
 
 ### Energy function for this implementation
 
-This implementation uses the improved forward-energy formula as [described in this paper](http://www.eng.tau.ac.il/~avidan/papers/vidret.pdf)
+This implementation uses the improved forward-energy formula as [described in this paper](http://www.eng.tau.ac.il/~avidan/papers/vidret.pdf). The forward-energy critereon is known to produce better results over the original energy formula, especially whith images that contain horizontal lines:
 
-### Using Djikstra's shortest-path algorithm to find seams
+// TODO example
 
-### Optimizations and improvements on the original algorithm
+### Using Dijkstra's shortest-path algorithm to find seams
 
-#### Up to 50x faster with memoization and caching
+This implementation leverages [Dijkstra's shortest-path algorithm](https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/) to calculate vertical paths of the least energy/weight through the image. Here's a brief explanation of how this is used in this implementation:
+
+1. Assign energy/weight values to all pixels in the image using an energy critereon
+2. Work top-down to create a matrix of cumulative energy values for each pixel in the image. As the Cumulative Energy matrix is populated, keep track of the paths followed in a Backtracking matrix.
+3. 
+
+## Optimizations and improvements on the original algorithm
+
+### Up to 50x faster with memoization and caching
 
 This version achieves significantly faster renders by caching the seams in order of least to most energy. Here is the difference in steps between this and the original algorithm:
 
 
 
-#### Half the number of array traversals between 'crops' with precise pixel management
+### Half the number of array traversals between 'crops' with precise pixel management
 
 ## Implementation-specific optimizations
 
-#### O(1) access/update of pixels in image with a smart EnergyMap class
+### O(1) access/update of pixels in image with a smart EnergyMap class
 
-#### O(1) removal/addition of pixel with the use of 'activate' in custom Pixel class
+### O(1) removal/addition of pixel with the use of 'activate' in custom Pixel class
+
+## Future improvements
+
+### Leverage GPU computation for data-parallel tasks
 
 ## Contribute
 

@@ -81,15 +81,11 @@ public class Image {
 
     public static void main(String[] args) {
         long startTime = System.nanoTime();
-        Image image = new Image(ImageUtil.readFromFile(new File("samples/sample1.jpg")));
+        Image image = new Image(ImageUtil.readFromFile(new File("docs/assets/Before3.jpg")));
         long endTime1 = System.nanoTime();
         System.out.println("Initialization took " + (endTime1-startTime) + " nanoseconds");
         try {
-            image.saveCroppedImage(-300.0,"samples/sample1-out3.png");
-            image.saveCroppedImage(-400.0,"samples/sample1-out4.png");
-            image.saveCroppedImage(-200.0,"samples/sample1-out5.png");
-            image.saveCroppedImage(-150.0,"samples/sample1-out6.png");
-            image.saveCroppedImage(-500.0,"samples/sample1-out7.png");
+            for(Double i=0.0; i < 800; i++) image.saveCroppedImage(-i,"docs/assets/frames/frame"+i.toString()+".jpg");
         } catch (Exception e) {
             System.out.println("Couldn't save image: " + e.getMessage());
         }

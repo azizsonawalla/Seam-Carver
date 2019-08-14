@@ -1,5 +1,6 @@
 sample-images-tests
 *.iml
 .idea
+*/*.jpg
 out/
 samples/

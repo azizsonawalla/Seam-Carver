@@ -1,6 +1,6 @@
 # Seam Carver - Content-aware image resizing
 
-An optimized and improved implementation of the [seam-carving algorithm (Shamir and Avidan, Mitsubishi Labs, 2007)](http://www.faculty.idc.ac.il/arik/SCWeb/imret/imret.pdf) to create faster renders and provide real-time previews. 
+An optimized and improved implementation of the seam-carving algorithm [(Shamir and Avidan, Mitsubishi Labs, 2007)](http://www.faculty.idc.ac.il/arik/SCWeb/imret/imret.pdf) to create faster renders and provide real-time previews. 
 
 [See what makes this implementation so efficient](#optimizations-and-improvements-on-the-original-algorithm)
 
@@ -70,9 +70,19 @@ However, this implementation still manages to remove pixels in constant time/O(1
 
 ### Non-destructive cropping mechanism allows interactive resizing
 
+Using the `setActive()` and `isActive()` methods of the Pixel object, we can non-desctruvtively 'remove' pixels from the 2D EnergyMatrix by disabling them. This has another advantage - it allows us to undo any pixel removals without reverse calculating.
+
+If you try out the GUI application linked above, you will notice that if you drag the slider back and forth the pixels that were removed from the image are added back in exactly the same place (we undo the pixel removal) without data-loss. This is not easily possible with the original algorithm as pixels that are once removed cannot be 're-calculated' and 're-positioned' back in the right place. You would have to start again from the original image and crop the number of pixels that you want.
+
+However, since this implementation never really removes the pixels from the 2D EnergyMatrix, adding them back in is simply a matter of reactivating them in the ArraList object.
+
+// TODO Slider resizing
+
 ## Future improvements
 
 ### Leverage GPU computation for data-parallel tasks
 
 ## Contribute
+
+Pull requests are more than welcome!
 

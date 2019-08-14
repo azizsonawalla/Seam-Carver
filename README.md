@@ -1,12 +1,15 @@
 # Seam Carver - Content-aware image resizing
 
-An optimized and improved implementation of the [seam-carving algorithm (Shamir and Avidan, Mitsubishi Labs, 2007)](http://www.faculty.idc.ac.il/arik/SCWeb/imret/imret.pdf) to create faster renders and provide real-time previews.
+An optimized and improved implementation of the [seam-carving algorithm (Shamir and Avidan, Mitsubishi Labs, 2007)](http://www.faculty.idc.ac.il/arik/SCWeb/imret/imret.pdf) to create faster renders and provide real-time previews. 
+
+[See what makes this implementation so efficient](#optimizations-and-improvements-on-the-original-algorithm)
 
 ## Try out the GUI application
 
 A basic GUI application (JavaFX + Java, packaged as an executable) that displays real-time, interactable renders from the algorithms implemented in this project. 
 
 [Click here to download the executable application]() //TODO
+
 Simply run the .exe file, click the 'Load image' button, and then move the slider around once the image is loaded. 
 
 > Note: Render speed varies by processing power of the computer you're using. For real-time previews, it is recommended to use an image that is no larger than 1500w x 800h

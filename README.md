@@ -35,7 +35,7 @@ This implementation leverages [Dijkstra's shortest-path algorithm](https://www.g
 
 1. Assign energy/weight values to all pixels in the image using an energy critereon
 2. Work top-down to create a matrix of cumulative energy values for each pixel in the image. As the Cumulative Energy matrix is populated, keep track of the paths followed in a Backtracking matrix.
-3. 
+3. Once the Cumulative Energy matrix and the Backtracking matrix are both populated, find the entry in the last row of the Cumulative Energy matrix with the least cumulative energy, and use the Backtracking matrix to find the path upwards
 
 ## Optimizations and improvements on the original algorithm
 
@@ -43,15 +43,29 @@ This implementation leverages [Dijkstra's shortest-path algorithm](https://www.g
 
 This version achieves significantly faster renders by caching the seams in order of least to most energy. Here is the difference in steps between this and the original algorithm:
 
-
+// TODO flow diagram
 
 ### Half the number of array traversals between 'crops' with precise pixel management
 
+The original algorithm iterates through all the pixels in the image after each iteration of removing pixels. This is unneccesary since most of the information within the image remains unchanged, and only a part of the pixels in the image need to be 'updated'. Here are the optimizations between the original algorithm and this implementation, specifically regarding updating the positions and energies of pixels after each iteration of pixel removal.
+
+// TODO diagrams
+
 ## Implementation-specific optimizations
 
-### O(1) access/update of pixels in image with a smart EnergyMap class
+### O(1) access/update of pixels in image with a smart EnergyMatrix class
 
-### O(1) removal/addition of pixel with the use of 'activate' in custom Pixel class
+When the image is imported, the pixel RGB data is stored in an [EnergyMatrix](src\model\EnergyMatrix.java) class with an underlying 2D [ArrayList<ArrayList<Pixel>> object](http://infotechgems.blogspot.com/2011/11/java-collections-performance-time.html) that has O(1) time complexity for adding/getting elements. This allows accessing and updating image data with O(1) time complexity. This is a powerful performance gain for this algorithm since it depends heavily on dynamically manipulating the pixel data in the image.
+
+### O(1) removal/addition of pixel from image by 'disabling/enabling' pixels rather than removing/adding
+
+While the use of 2D ArrayLists allows for adding/updating pixels form the image in constant/O(1) time, removing pixels would still be in linear time/O(n) since ArrayLists' `remove()` method [works in linear time](http://infotechgems.blogspot.com/2011/11/java-collections-performance-time.html). 
+
+However, this implementation still manages to remove pixels in constant time/O(1) by 'disabling' pixels in the image rather than actually removing them from the ArrayList. 'Disabling' a pixel involves setting a property on the Pixel object (by calling `setActive()`) which is an O(1) operation. Then, when the 2D ArrayList is to be exported as an image, we check for disabled pixels (`isActive()`), which is also in constant time, and ignore them when producing the BufferedImage object. This way, we can 'remove' pixels from the image in constant time.
+
+// TODO diagram
+
+### Non-destructive cropping mechanism allows interactive resizing
 
 ## Future improvements
 

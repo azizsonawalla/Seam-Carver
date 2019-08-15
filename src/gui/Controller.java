@@ -4,6 +4,8 @@ import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
@@ -13,6 +15,7 @@ import util.ImageUtil;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -32,20 +35,27 @@ public class Controller {
 
     // Thread pool for background tasks
     private ExecutorService workerPool;
+    // Cache
+    private ConcurrentHashMap<Double, BufferedImage> cache;
 
     // Minimum change in slider before preview refreshes
     private int BLOCK_INCREMENT = 2;
     // Preview image max height
     private int PREVIEW_HEIGHT = 800;
+    // Feature toggle for cache
+    private boolean USE_CACHE = false;
 
     private Stage stage;
     @FXML private Button loadImageButton;
     @FXML private ImageView imageView;
     @FXML private Slider slider;
+    @FXML private ProgressIndicator loadingIndicator;
+    @FXML private Label loadingMessage;
 
     public Controller() {
         workerPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         imageLock = new ReentrantReadWriteLock();
+        cache = new ConcurrentHashMap<>();
     }
 
     public void setStage(Stage stage) {
@@ -59,6 +69,8 @@ public class Controller {
     public void initializeUIElements() {
         loadImageButton.setOnAction(event -> openFileChooser());
         slider.setVisible(false);
+        loadingIndicator.setVisible(false);
+        loadingMessage.setVisible(false);
     }
 
     /**
@@ -81,19 +93,24 @@ public class Controller {
      * @param imageFile image file to instantiate Image object with
      */
     private void initializeImageObject(File imageFile) {
-        // TODO: Show loading bar
+        Platform.runLater(() -> {
+            loadingIndicator.setVisible(true);
+            loadingMessage.setVisible(true);
+        });
         imageLock.writeLock().lock();
         try {
             BufferedImage bufferedImage = ImageUtil.readFromFile(imageFile);
-            BufferedImage scaledBufferedImage = ImageUtil.reduceHeight(bufferedImage, PREVIEW_HEIGHT);
-            System.out.println(String.format("Image: %dx%d", scaledBufferedImage.getWidth(), scaledBufferedImage.getHeight()));
-            image = new Image(scaledBufferedImage);
+            image = new Image(bufferedImage);
         } catch (Exception e) {
             // TODO: Show error pop-up on GUI
             return;
         } finally {
             imageLock.writeLock().unlock();
         }
+        Platform.runLater(() -> {
+            loadingIndicator.setVisible(false);
+            loadingMessage.setVisible(false);
+        });
         refreshSlider();
         refreshImageView(null, null);
     }
@@ -129,13 +146,18 @@ public class Controller {
             try {
                 Double relativePixels = slider.getValue();
                 BufferedImage newPreview = null;
-                try {
-                    imageLock.writeLock().lock();
-                    newPreview = image.getCropped(relativePixels);
-                } catch (Exception e) {
-                    // TODO: Show error pop-up on GUI
-                } finally {
-                    imageLock.writeLock().unlock();
+                if (USE_CACHE && cache.containsKey(relativePixels)) {
+                    newPreview = cache.get(relativePixels);
+                } else {
+                    try {
+                        imageLock.writeLock().lock();
+                        newPreview = image.getCropped(relativePixels);
+                        if (USE_CACHE) cache.put(relativePixels, newPreview);
+                    } catch (Exception e) {
+                        // TODO: Show error pop-up on GUI
+                    } finally {
+                        imageLock.writeLock().unlock();
+                    }
                 }
                 imageView.setImage(SwingFXUtils.toFXImage(newPreview, null));
                 centerImageView();

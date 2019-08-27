@@ -1,6 +1,8 @@
 # Seam Carver - Content-aware image resizing
 
-An optimized and improved implementation of the seam-carving algorithm [(Shamir and Avidan, Mitsubishi Labs, 2007)](http://www.faculty.idc.ac.il/arik/SCWeb/imret/imret.pdf) to create faster renders and provide real-time previews. 
+An optimized and improved implementation of the seam-carving algorithm [(Shamir and Avidan, Mitsubishi Labs, 2007)](http://www.faculty.idc.ac.il/arik/SCWeb/imret/imret.pdf) to create faster renders and provide real-time previews.
+
+<img src="docs\assets\smart-crop-gif2.gif" width="80%" align="center">
 
 [See what makes this implementation so efficient](#optimizations-and-improvements-on-the-original-algorithm)
 

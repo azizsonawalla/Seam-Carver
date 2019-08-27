@@ -18,7 +18,7 @@ Simply run the .exe file, click the 'Load image' button, and then move the slide
 
 ## Sample images
 
-<center><img src="docs\assets\samples.jpg" width="80%"></center>
+<center><img src="docs\assets\samples.jpg" width="80%" align="center"></center>
 
 ## The Algorithm
 

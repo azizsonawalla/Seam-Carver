@@ -2,7 +2,7 @@
 
 An optimized and improved implementation of the seam-carving algorithm [(Shamir and Avidan, Mitsubishi Labs, 2007)](http://www.faculty.idc.ac.il/arik/SCWeb/imret/imret.pdf) to create faster renders and provide real-time previews.
 
-<center><img src="docs\assets\seam-carver.gif" width="80%" align="center"></center><br>
+<center><img src="docs\assets\seam-carver.gif" width="100%" align="center"></center><br>
 
 >Red lines in the frames above represent the least energy pixel path
 

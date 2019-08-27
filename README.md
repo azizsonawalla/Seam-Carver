@@ -4,7 +4,7 @@ An optimized and improved implementation of the seam-carving algorithm [(Shamir 
 
 <center><img src="docs\assets\seam-carver.gif" width="100%" align="center"></center><br>
 
->Red lines in the frames above represent the least energy pixel path
+>Red lines in the image above represent the least energy pixel path in each frame that was removed/added
 
 [See what makes this implementation so efficient](#optimizations-and-improvements-on-the-original-algorithm)
 

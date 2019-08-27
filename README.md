@@ -10,7 +10,7 @@ An optimized and improved implementation of the seam-carving algorithm [(Shamir 
 
 A basic GUI application (JavaFX + Java, packaged as an executable) that displays real-time, interactable renders from the algorithms implemented in this project. 
 
-[Click here to download the executable application]() //TODO
+[Click here to download the executable application](out\artifacts\Seam_Carver.zip)
 
 Simply run the .exe file, click the 'Load image' button, and then move the slider around once the image is loaded. 
 
@@ -18,7 +18,7 @@ Simply run the .exe file, click the 'Load image' button, and then move the slide
 
 ## Sample images
 
-<center><img src="docs\assets\samples.jpg" width="80%" align="center"></center>
+<center><img src="docs\assets\samples.jpg" width="80%" align="center"></center><br>
 
 ## The Algorithm
 

@@ -50,7 +50,9 @@ This implementation leverages [Dijkstra's shortest-path algorithm](https://www.g
 
 This version achieves significantly faster renders by caching the seams in order of least to most energy. Here is the difference in steps between this and the original algorithm:
 
-// TODO flow diagram
+<img src="docs\assets\og_algorithm.png" width="50%" align="left">
+<img src="docs\assets\new_algorithm.png" width="50%" align="right">
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 ### Half the number of array traversals between 'crops' with precise pixel management
 

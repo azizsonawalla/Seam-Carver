@@ -56,7 +56,6 @@ This version achieves significantly faster renders by caching the seams in order
 
 The original algorithm iterates through all the pixels in the image after each iteration of removing pixels. This is unneccesary since most of the information within the image remains unchanged, and only a part of the pixels in the image need to be 'updated'. Here are the optimizations between the original algorithm and this implementation, specifically regarding updating the positions and energies of pixels after each iteration of pixel removal.
 
-// TODO diagrams
 
 ## Implementation-specific optimizations
 
@@ -70,7 +69,6 @@ While the use of 2D ArrayLists allows for adding/updating pixels form the image 
 
 However, this implementation still manages to remove pixels in constant time/O(1) by 'disabling' pixels in the image rather than actually removing them from the ArrayList. 'Disabling' a pixel involves setting a property on the Pixel object (by calling `setActive()`) which is an O(1) operation. Then, when the 2D ArrayList is to be exported as an image, we check for disabled pixels (`isActive()`), which is also in constant time, and ignore them when producing the BufferedImage object. This way, we can 'remove' pixels from the image in constant time.
 
-// TODO diagram
 
 ### Non-destructive cropping mechanism allows interactive resizing
 
@@ -85,6 +83,8 @@ However, since this implementation never really removes the pixels from the 2D E
 ## Future improvements
 
 ### Leverage GPU computation for data-parallel tasks
+
+Updating pixel arrays is a data-parallel task that this algorithm performs for arrays that can have up to millions of elements (one pixel is one element). These kind of tasks can benefit greatly in performance by leveraging the numerous cores of a GPU. More information on GPU computation can be found [here](https://www.ibm.com/support/knowledgecenter/en/SSYKE2_8.0.0/com.ibm.java.80.doc/docs/gpu_jit.html)
 
 ## Contribute
 

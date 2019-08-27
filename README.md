@@ -2,7 +2,9 @@
 
 An optimized and improved implementation of the seam-carving algorithm [(Shamir and Avidan, Mitsubishi Labs, 2007)](http://www.faculty.idc.ac.il/arik/SCWeb/imret/imret.pdf) to create faster renders and provide real-time previews.
 
-<img src="docs\assets\smart-crop-gif2.gif" width="80%" align="center">
+<center><img src="https://media.giphy.com/media/ZdkrgHUDJFeLOwnbLG/giphy.gif" width="80%" align="center"></center><br>
+
+>Red lines in the frames above represent the least energy pixel path
 
 [See what makes this implementation so efficient](#optimizations-and-improvements-on-the-original-algorithm)
 
